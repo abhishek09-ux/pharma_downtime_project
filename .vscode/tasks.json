@@ -1,0 +1,59 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run main.py",
+			"type": "shell",
+			"command": "python main.py",
+			"problemMatcher": [
+				"$python"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Run main.py after fixing BaseSettings import",
+			"type": "shell",
+			"command": "python main.py",
+			"problemMatcher": [
+				"$python"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Run main.py after fixing duplicate import",
+			"type": "shell",
+			"command": "python main.py",
+			"problemMatcher": [
+				"$python"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Run main.py after installing psycopg2-binary",
+			"type": "shell",
+			"command": "python main.py",
+			"problemMatcher": [
+				"$python"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Run main.py using correct venv python executable",
+			"type": "shell",
+			"command": "C:/Users/abhis/pharma_downtime_project/venv/Scripts/python.exe main.py",
+			"problemMatcher": [
+				"$python"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Run main.py to show print statement",
+			"type": "shell",
+			"command": "python main.py",
+			"problemMatcher": [
+				"$python"
+			],
+			"group": "build"
+		}
+	]
+}
