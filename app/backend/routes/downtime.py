@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.models.downtime import Downtime
 from app.schemas.downtime_schema import DowntimeCreate, DowntimeResponse
+from app.ml.model import predict_downtime
 
 router = APIRouter()
 
@@ -24,5 +25,3 @@ def get_downtime_event(event_id: int, db: Session = Depends(get_db)):
     if not event:
         raise HTTPException(status_code=404, detail="Event not found")
     return event
-
-## Removed duplicate and incorrect DowntimeEvent references. Use only DowntimeCreate, DowntimeResponse, and Downtime ORM model as above.

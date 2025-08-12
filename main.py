@@ -9,14 +9,16 @@ import io
 import base64
 from app.core.database import Base, engine, get_db
 from app.models.downtime import Downtime
-from app.routes import downtime_routes
+from app.routes import downtime_routes, sensor
 from app.ml.model import predict_downtime
 
 # Create all tables
 Base.metadata.create_all(bind=engine)
 
+
 app = FastAPI(title="Pharma Downtime Project", version="1.0")
 app.include_router(downtime_routes.router)
+app.include_router(sensor.router)
 
 @app.get("/")
 def root():
@@ -95,9 +97,39 @@ def get_report_chart(db: Session = Depends(get_db)):
     return Response(content=img_bytes, media_type="image/png")
 
 @app.get("/predict")
-def predict_endpoint(temperature: float, vibration: float, load: float):
+def predict_endpoint(temperature: float, vibration: float, load: float, shift: int):
+    import joblib
+    import numpy as np
     try:
-        result = predict_downtime(temperature, vibration, load)
-        return {"temperature": temperature, "vibration": vibration, "load": load, "downtime_predicted": bool(result)}
+        # Load model trained with 4 features
+        model = joblib.load("app/ml/downtime_model.pkl")
+        features = [temperature, vibration, load, shift]
+        if hasattr(model, 'predict_proba'):
+            prob = model.predict_proba(np.array(features).reshape(1, -1))[0][1]
+            pred = model.predict(np.array(features).reshape(1, -1))[0]
+            return {
+                "temperature": temperature,
+                "vibration": vibration,
+                "load": load,
+                "shift": shift,
+                "downtime_probability": round(prob, 2),
+                "downtime_predicted": bool(pred)
+            }
+        else:
+            pred = model.predict(np.array(features).reshape(1, -1))[0]
+            return {
+                "temperature": temperature,
+                "vibration": vibration,
+                "load": load,
+                "shift": shift,
+                "downtime_predicted": bool(pred)
+            }
     except Exception as e:
         return {"error": str(e)}
+
+
+# Remove duplicate app creation and router includes
+# All routers should be included in the main app instance above
+# If you want to include additional routers, do it after the main app is created:
+# app.include_router(sensor.router)
+# app.include_router(ws_routes.router)
