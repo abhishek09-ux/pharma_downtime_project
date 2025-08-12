@@ -16,3 +16,6 @@ from app.utils.ml_model import predict_downtime_risk
 
 def get_downtime_prediction(machine_id: str):
     return predict_downtime_risk(machine_id)
+def get_downtime_prediction(machine_id: int, avg_temp: float, avg_vibration: float, past_failures: int):
+    from app.utils.ml_model import predict_downtime_risk
+    return predict_downtime_risk(machine_id, avg_temp, avg_vibration, past_failures)
