@@ -54,6 +54,12 @@
 				"$python"
 			],
 			"group": "build"
+		},
+		{
+			"label": "Start FastAPI backend",
+			"type": "shell",
+			"command": "uvicorn main:app --reload",
+			"group": "build"
 		}
 	]
 }

@@ -1,12 +1,15 @@
 
-# main.py
-from fastapi import FastAPI, Response, Depends
+
+
+from fastapi import FastAPI, Response, Depends, WebSocket
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import io
 import base64
+import asyncio
 from app.core.database import Base, engine, get_db
 from app.models.downtime import Downtime
 from app.routes import downtime_routes, sensor
@@ -15,8 +18,14 @@ from app.ml.model import predict_downtime
 # Create all tables
 Base.metadata.create_all(bind=engine)
 
-
 app = FastAPI(title="Pharma Downtime Project", version="1.0")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Or ["http://localhost:3000"] for more security
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.include_router(downtime_routes.router)
 app.include_router(sensor.router)
 
@@ -127,9 +136,18 @@ def predict_endpoint(temperature: float, vibration: float, load: float, shift: i
     except Exception as e:
         return {"error": str(e)}
 
+# WebSocket endpoint for live dashboard
+clients = set()
 
-# Remove duplicate app creation and router includes
-# All routers should be included in the main app instance above
-# If you want to include additional routers, do it after the main app is created:
-# app.include_router(sensor.router)
-# app.include_router(ws_routes.router)
+@app.websocket("/ws/monitor")
+async def websocket_monitor(websocket: WebSocket):
+    await websocket.accept()
+    clients.add(websocket)
+    try:
+        while True:
+            # Keep connection alive, optionally send heartbeat
+            await asyncio.sleep(10)
+    except Exception:
+        pass
+    finally:
+        clients.remove(websocket)
