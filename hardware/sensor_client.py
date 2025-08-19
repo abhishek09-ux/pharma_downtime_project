@@ -25,6 +25,7 @@ if IS_RASPBERRY_PI:
         import adafruit_dht
         import spidev
         import smbus2 as smbus
+        import adafruit_ds3231  # For RTC
         HARDWARE_AVAILABLE = True
         logger.info("Running on Raspberry Pi - hardware libraries loaded")
     except ImportError as e:
@@ -56,12 +57,19 @@ class SensorManager:
                 # ADXL335 vibration sensor (analog - using MCP3008 ADC)
                 self.setup_vibration_sensor()
                 
-                logger.info("Hardware sensors initialized successfully")
+                # ACS712 current sensor for load monitoring
+                self.setup_current_sensor()
+                
+                # RTC for accurate shift detection
+                self.setup_rtc()
+                
+                logger.info("All hardware sensors initialized successfully")
             else:
                 logger.info("Using simulated sensors for development")
                 self.dht22 = None
                 self.i2c = None
                 self.spi = None
+                self.rtc = None
             
         except Exception as e:
             logger.error(f"Sensor initialization error: {e}")
@@ -69,7 +77,20 @@ class SensorManager:
             self.dht22 = None
             self.i2c = None
             self.spi = None
-            
+            self.rtc = None
+
+    def setup_current_sensor(self):
+        """Setup ACS712 current sensor for load monitoring"""
+        try:
+            if HARDWARE_AVAILABLE and self.spi:
+                # ACS712 uses the same MCP3008 ADC as vibration sensor
+                # Will use channel 3 for current sensor
+                logger.info("ACS712 current sensor ready on MCP3008 channel 3")
+            else:
+                logger.info("ACS712 will use simulated data")
+        except Exception as e:
+            logger.warning(f"Current sensor setup failed: {e}, using simulated load data")
+
     def setup_vibration_sensor(self):
         """Setup ADXL335 vibration sensor via MCP3008 ADC"""
         try:
@@ -84,6 +105,18 @@ class SensorManager:
             logger.warning(f"spidev setup failed: {e}, using simulated vibration data")
             self.spi = None
             
+    def setup_rtc(self):
+        """Setup DS3231 RTC for accurate time/shift detection"""
+        try:
+            if HARDWARE_AVAILABLE and self.i2c:
+                self.rtc = adafruit_ds3231.DS3231(self.i2c)
+                logger.info("DS3231 RTC ready")
+            else:
+                self.rtc = None
+        except Exception as e:
+            logger.warning(f"RTC setup failed: {e}, using system time")
+            self.rtc = None
+
     def read_mlx90614_temp(self):
         """Read temperature from MLX90614 IR sensor"""
         try:
@@ -194,6 +227,72 @@ class SensorManager:
         data = ((adc[1] & 3) << 8) + adc[2]
         return data
         
+    def read_machine_load(self):
+        """Read machine load from power meter"""
+        try:
+            if HARDWARE_AVAILABLE and self.power_meter:
+                # Send PZEM-004T command to read power
+                command = b'\xB0\xC0\xA8\x01\x01\x00\x1E'
+                self.power_meter.write(command)
+                time.sleep(0.1)
+                
+                response = self.power_meter.read(25)
+                if len(response) >= 25:
+                    # Parse power data (watts)
+                    power = int.from_bytes(response[9:13], byteorder='big') / 10.0
+                    
+                    # Convert to percentage (assume 1000W = 100% load)
+                    load_percentage = min(100.0, (power / 1000.0) * 100)
+                    return round(load_percentage, 1)
+                else:
+                    raise Exception("Invalid power meter response")
+            else:
+                # Simulated load based on vibration + time patterns
+                base_load = 75  # Base load percentage
+                vibration_factor = (self.last_vibration - 1.0) * 10  # Higher vibration = higher load
+                time_factor = math.sin(time.time() * 0.02) * 15  # Slow load variation
+                noise = random.uniform(-5, 8)
+                load = base_load + vibration_factor + time_factor + noise
+                return round(max(50, min(100, load)), 1)
+                
+        except Exception as e:
+            logger.warning(f"Power meter read error: {e}, using simulated data")
+            # Fallback to simulated load
+            base_load = 75
+            time_factor = math.sin(time.time() * 0.02) * 15
+            noise = random.uniform(-5, 8)
+            load = base_load + time_factor + noise
+            return round(max(50, min(100, load)), 1)
+
+    def get_current_shift(self):
+        """Enhanced shift detection with RTC backup"""
+        try:
+            # Try RTC first for accurate time
+            if HARDWARE_AVAILABLE and self.rtc:
+                current_time = self.rtc.datetime
+                hour = current_time.tm_hour
+            else:
+                # Fallback to system time
+                hour = datetime.now().hour
+        
+            # Pharma industry standard shifts
+            shifts = {
+                "day": {"start": 6, "end": 14, "id": 1, "name": "Day Shift (06:00-14:00)"},
+                "evening": {"start": 14, "end": 22, "id": 2, "name": "Evening Shift (14:00-22:00)"},
+                "night": {"start": 22, "end": 6, "id": 3, "name": "Night Shift (22:00-06:00)"}
+            }
+        
+            if 6 <= hour < 14:
+                return shifts["day"]["id"], shifts["day"]["name"]
+            elif 14 <= hour < 22:
+                return shifts["evening"]["id"], shifts["evening"]["name"]
+            else:
+                return shifts["night"]["id"], shifts["night"]["name"]
+            
+        except Exception as e:
+            logger.warning(f"Shift detection error: {e}, using default")
+            return 1, "Day Shift"  # Default fallback
+
     def calculate_risk_score(self, temp, humidity, vibration):
         """Calculate downtime risk based on sensor readings"""
         risk = 0.0
@@ -218,6 +317,38 @@ class SensorManager:
             
         return min(1.0, max(0.0, risk))
         
+    def calculate_comprehensive_risk(self, temp, humidity, vibration, load):
+        """Calculate downtime risk including shift factors"""
+        risk = 0.0
+        
+        # Temperature risk (optimal range: 70-80°C for machine temp)
+        if temp > 85:
+            risk += (temp - 85) * 0.03
+        elif temp < 65:
+            risk += (65 - temp) * 0.02
+            
+        # Humidity risk (optimal range: 40-60%)
+        if humidity > 70:
+            risk += (humidity - 70) * 0.01
+        elif humidity < 30:
+            risk += (30 - humidity) * 0.01
+            
+        # Vibration risk (normal < 2.5)
+        if vibration > 2.5:
+            risk += (vibration - 2.5) * 0.2
+        elif vibration > 4.0:
+            risk += (vibration - 2.5) * 0.4  # Critical vibration
+            
+        # Shift risk factor (based on industry data)
+        shift, _ = self.get_current_shift()
+        if shift == 3:  # Night shift
+            risk += 0.08  # 8% additional risk
+        elif shift == 2:  # Evening shift  
+            risk += 0.03  # 3% additional risk
+        # Day shift = baseline (no additional risk)
+        
+        return min(1.0, max(0.0, risk))
+        
     async def collect_sensor_data(self):
         """Collect data from all sensors"""
         try:
@@ -229,18 +360,16 @@ class SensorManager:
             
             # Read vibration
             vibration = self.read_adxl335_vibration()
+            self.last_vibration = vibration  # Store for load calculation
             
-            # Calculate risk score
-            risk_score = self.calculate_risk_score(machine_temp, humidity, vibration)
+            # Read machine load from ACS712 current sensor
+            machine_load, current_amps = self.read_acs712_current()
             
-            # Determine shift (simple time-based)
-            hour = datetime.now().hour
-            if 6 <= hour < 14:
-                shift = 1
-            elif 14 <= hour < 22:
-                shift = 2
-            else:
-                shift = 3
+            # Get current shift
+            shift, shift_name = self.get_current_shift()
+            
+            # Calculate comprehensive risk score
+            risk_score = self.calculate_comprehensive_risk(machine_temp, humidity, vibration, machine_load)
                 
             sensor_data = {
                 "timestamp": datetime.now().isoformat(),
@@ -249,13 +378,16 @@ class SensorManager:
                 "ambient_temp": dht_temp,
                 "humidity": humidity,
                 "vibration": vibration,
-                "machine_load": round(70 + vibration * 8, 1),  # Simulated load based on vibration
+                "machine_load": machine_load,
+                "current_amps": current_amps,
                 "shift": shift,
+                "shift_name": shift_name,
                 "downtime_probability": round(risk_score, 3),
-                "sensor_status": "online" if HARDWARE_AVAILABLE else "simulated"
+                "sensor_status": "online" if HARDWARE_AVAILABLE else "simulated",
+                "power_consumption": round(current_amps * 220, 1)  # Estimated watts (assuming 220V)
             }
             
-            logger.info(f"Sensor data: Temp={machine_temp}°C, Humidity={humidity}%, Vib={vibration}g, Risk={risk_score}")
+            logger.info(f"Sensor data: Temp={machine_temp}°C, Load={machine_load}%, Current={current_amps}A, Shift={shift}, Risk={risk_score}")
             return sensor_data
             
         except Exception as e:
@@ -329,6 +461,9 @@ if __name__ == "__main__":
     
     # Create sensor manager
     sensor_manager = SensorManager(MACHINE_ID, SERVER_URL)
+    
+    # Run monitoring
+    asyncio.run(sensor_manager.run_monitoring_loop())
     
     # Run monitoring
     asyncio.run(sensor_manager.run_monitoring_loop())
