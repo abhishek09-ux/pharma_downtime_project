@@ -1,8 +1,10 @@
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
-matplotlib==3.8.2
-numpy==1.26.2
-pandas==2.1.4
-scikit-learn==1.3.2
-sqlalchemy==2.0.23
+websockets==12.0
 python-multipart==0.0.6
+
+# Raspberry Pi specific libraries (install only on Pi)
+# RPi.GPIO>=0.7.1
+# adafruit-circuitpython-dht>=3.7.0
+# adafruit-circuitpython-ads1x15>=2.2.21
+# adafruit-blinka>=8.22.0

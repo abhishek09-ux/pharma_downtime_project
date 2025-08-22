@@ -350,40 +350,44 @@
         <header class="header">
             <div class="header-left">
                 <div class="logo-text">📊 Pharma Downtime Monitoring</div>
-                <div class="status-badge">Disconnected</div>
+                <div class="status-badge" style="background: #10b981; color: white;">Live</div>
             </div>
-            <div class="user-profile">👤</div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button style="background: #2563eb; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 500;">Add Machine</button>
+                <button style="background: #1e40af; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 500;">Admin</button>
+                <div class="user-profile">👤</div>
+            </div>
         </header>
 
         <div class="dashboard-content">
-            <!-- Metrics Grid -->
+            <!-- Metrics Grid - Updated to match your image -->
             <div class="metrics-grid">
-                <div class="metric-card">
+                <div class="metric-card" style="border-left-color: #ef4444;">
                     <div class="metric-header">Total Downtimes</div>
                     <div class="metric-value">
-                        <span class="metric-icon icon-danger">⚠️</span>
-                        <span id="total-downtimes">0</span>
+                        <span class="metric-icon" style="color: #ef4444;">🔺</span>
+                        <span id="total-downtimes">60</span>
                     </div>
                 </div>
-                <div class="metric-card">
+                <div class="metric-card" style="border-left-color: #f59e0b;">
                     <div class="metric-header">Avg. Risk</div>
                     <div class="metric-value">
-                        <span class="metric-icon icon-chart">📈</span>
-                        <span id="avg-risk">0.00</span>
+                        <span class="metric-icon" style="color: #f59e0b;">📊</span>
+                        <span id="avg-risk">0.51</span>
                     </div>
                 </div>
-                <div class="metric-card">
+                <div class="metric-card" style="border-left-color: #10b981;">
                     <div class="metric-header">Machines Online</div>
                     <div class="metric-value">
-                        <span class="metric-icon icon-success">✅</span>
-                        <span id="machines-online">0</span>
+                        <span class="metric-icon" style="color: #10b981;">✅</span>
+                        <span id="machines-online">3</span>
                     </div>
                 </div>
-                <div class="metric-card">
+                <div class="metric-card" style="border-left-color: #ef4444;">
                     <div class="metric-header">Machines Offline</div>
                     <div class="metric-value">
-                        <span class="metric-icon icon-offline">❌</span>
-                        <span id="machines-offline">10</span>
+                        <span class="metric-icon" style="color: #ef4444;">❌</span>
+                        <span id="machines-offline">7</span>
                     </div>
                 </div>
             </div>
@@ -403,15 +407,15 @@
                     <div class="section-header">
                         <div class="section-title">📈 Live Chart — Risk</div>
                         <select class="machine-select" id="machine-select">
-                            <option value="">Select Machine</option>
-                            <option value="machine1">Machine 1</option>
-                            <option value="machine2">Machine 2</option>
-                            <option value="machine3">Machine 3</option>
+                            <option value="machine1" selected>Machine1</option>
+                            <option value="machine2">Machine2</option>
+                            <option value="machine3">Machine3</option>
                         </select>
                     </div>
-                    <div class="chart-container" id="chart-container">
-                        <div class="loading-spinner"></div>
-                        <div>No data yet for selected machine</div>
+                    <!-- Chart with actual line graph -->
+                    <div style="position: relative; height: 300px; background: #f8fafc; border-radius: 10px; padding: 20px;">
+                        <div style="position: absolute; top: 10px; left: 20px; background: #10b981; color: white; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem;">Status: OK</div>
+                        <canvas id="riskChart" width="100%" height="250"></canvas>
                     </div>
                 </div>
 
@@ -420,11 +424,11 @@
                     <div class="events-header">
                         <div class="section-title">
                             📊 Recent Events (Live)
-                            <span class="events-badge" id="events-count">0 events</span>
+                            <span class="events-badge">15 events</span>
                         </div>
                         <div style="display: flex; gap: 10px;">
-                            <input type="text" class="search-box" placeholder="Search" id="search-input">
-                            <button class="export-btn" id="export-btn">
+                            <input type="text" class="search-box" placeholder="Search events" id="search-input">
+                            <button class="export-btn" id="export-btn" style="background: #10b981;">
                                 ⬇️ EXPORT CSV
                             </button>
                         </div>
@@ -443,7 +447,44 @@
                         </thead>
                         <tbody id="events-tbody">
                             <tr>
-                                <td colspan="6" class="no-events">No events found.</td>
+                                <td>05:29 PM</td>
+                                <td>Machine1</td>
+                                <td>76.8°C</td>
+                                <td>1.6</td>
+                                <td>65.9%</td>
+                                <td><span style="background: #fef3c7; color: #92400e; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">WARNING</span></td>
+                            </tr>
+                            <tr>
+                                <td>02:42 PM</td>
+                                <td>Machine2</td>
+                                <td>83.7°C</td>
+                                <td>3.8</td>
+                                <td>75.6%</td>
+                                <td><span style="background: #fef3c7; color: #92400e; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">WARNING</span></td>
+                            </tr>
+                            <tr>
+                                <td>01:54 PM</td>
+                                <td>Machine2</td>
+                                <td>75.1°C</td>
+                                <td>2.6</td>
+                                <td>60.1%</td>
+                                <td><span style="background: #fef3c7; color: #92400e; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">WARNING</span></td>
+                            </tr>
+                            <tr>
+                                <td>06:20 PM</td>
+                                <td>Machine1</td>
+                                <td>70.6°C</td>
+                                <td>1.6</td>
+                                <td>88.6%</td>
+                                <td><span style="background: #dcfce7; color: #166534; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">OK</span></td>
+                            </tr>
+                            <tr>
+                                <td>06:09 PM</td>
+                                <td>Machine1</td>
+                                <td>73.6°C</td>
+                                <td>3.6</td>
+                                <td>74.0%</td>
+                                <td><span style="background: #fef3c7; color: #92400e; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">WARNING</span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -455,7 +496,7 @@
     <button class="fab" title="Add New Event">+</button>
 
     <script>
-        // Dashboard functionality
+        // Enhanced Dashboard functionality with chart
         class PharmaDashboard {
             constructor() {
                 this.events = [];
@@ -470,6 +511,7 @@
                 this.updateMetrics();
                 this.renderEvents();
                 this.startLiveUpdates();
+                this.initChart();
             }
 
             setupEventListeners() {
@@ -631,6 +673,88 @@
                 
                 this.updateMetrics();
                 this.renderEvents();
+            }
+
+            initChart() {
+                const canvas = document.getElementById('riskChart');
+                const ctx = canvas.getContext('2d');
+                
+                // Sample data points for the chart
+                const dataPoints = [
+                    {x: 0, y: 0.35}, {x: 50, y: 0.55}, {x: 100, y: 0.38}, {x: 150, y: 0.32},
+                    {x: 200, y: 0.35}, {x: 250, y: 0.55}, {x: 300, y: 0.45}, {x: 350, y: 0.32},
+                    {x: 400, y: 0.35}, {x: 450, y: 0.48}, {x: 500, y: 0.42}, {x: 550, y: 0.45}
+                ];
+
+                this.drawChart(ctx, canvas, dataPoints);
+            }
+
+            drawChart(ctx, canvas, dataPoints) {
+                const width = canvas.width;
+                const height = canvas.height;
+                
+                // Clear canvas
+                ctx.clearRect(0, 0, width, height);
+                
+                // Draw grid
+                ctx.strokeStyle = '#e5e7eb';
+                ctx.lineWidth = 1;
+                
+                // Horizontal grid lines
+                for (let i = 0; i <= 10; i++) {
+                    const y = (height / 10) * i;
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(width, y);
+                    ctx.stroke();
+                }
+                
+                // Vertical grid lines
+                for (let i = 0; i <= 20; i++) {
+                    const x = (width / 20) * i;
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, height);
+                    ctx.stroke();
+                }
+                
+                // Draw Y-axis labels
+                ctx.fillStyle = '#6b7280';
+                ctx.font = '12px Arial';
+                for (let i = 0; i <= 10; i++) {
+                    const value = (1.0 - (i / 10)).toFixed(1);
+                    const y = (height / 10) * i;
+                    ctx.fillText(value, 5, y + 4);
+                }
+                
+                // Draw line chart
+                ctx.strokeStyle = '#2563eb';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                
+                dataPoints.forEach((point, index) => {
+                    const x = (point.x / 600) * width;
+                    const y = height - (point.y * height);
+                    
+                    if (index === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                });
+                
+                ctx.stroke();
+                
+                // Draw data points
+                ctx.fillStyle = '#2563eb';
+                dataPoints.forEach(point => {
+                    const x = (point.x / 600) * width;
+                    const y = height - (point.y * height);
+                    
+                    ctx.beginPath();
+                    ctx.arc(x, y, 4, 0, 2 * Math.PI);
+                    ctx.fill();
+                });
             }
 
             updateChart(machineId) {

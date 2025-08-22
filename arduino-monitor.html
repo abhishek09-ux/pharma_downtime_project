@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arduino Serial Monitor - Pharma Downtime</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1a1a1a;
+            color: #00ff00;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .header {
+            background: #333;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .monitor {
+            background: #000;
+            color: #00ff00;
+            padding: 20px;
+            border-radius: 8px;
+            height: 500px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            border: 2px solid #333;
+        }
+
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .status {
+            background: #333;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔌 Arduino Serial Monitor</h1>
+        <p>Monitor real-time sensor data from your Arduino</p>
+        <a href="dashboard.html" style="color: #2563eb;">← Back to Dashboard</a>
+    </div>
+
+    <div class="status">
+        <strong>Status:</strong> <span id="connection-status">Checking connection...</span><br>
+        <strong>Port:</strong> <span id="port-info">Detecting...</span><br>
+        <strong>Baud Rate:</strong> <span id="baud-rate">9600</span>
+    </div>
+
+    <div class="controls">
+        <button class="btn" onclick="connectArduino()">Connect</button>
+        <button class="btn" onclick="disconnectArduino()">Disconnect</button>
+        <button class="btn" onclick="clearMonitor()">Clear</button>
+        <button class="btn" onclick="exportData()">Export Data</button>
+    </div>
+
+    <div class="monitor" id="serial-monitor">
+        <div>Arduino Serial Monitor Initialized...</div>
+        <div>Waiting for connection...</div>
+        <div>---</div>
+    </div>
+
+    <script>
+        let connected = false;
+        let dataInterval = null;
+
+        function updateStatus(status, port = 'Not connected', baud = '9600') {
+            document.getElementById('connection-status').textContent = status;
+            document.getElementById('port-info').textContent = port;
+            document.getElementById('baud-rate').textContent = baud;
+        }
+
+        function addToMonitor(message) {
+            const monitor = document.getElementById('serial-monitor');
+            const timestamp = new Date().toLocaleTimeString();
+            const div = document.createElement('div');
+            div.textContent = `[${timestamp}] ${message}`;
+            monitor.appendChild(div);
+            monitor.scrollTop = monitor.scrollHeight;
+
+            // Keep only last 1000 lines
+            while (monitor.children.length > 1000) {
+                monitor.removeChild(monitor.firstChild);
+            }
+        }
+
+        function connectArduino() {
+            if (connected) {
+                addToMonitor('Already connected to Arduino');
+                return;
+            }
+
+            addToMonitor('Attempting to connect to Arduino...');
+            updateStatus('Connecting...', 'Scanning ports...', '9600');
+
+            setTimeout(() => {
+                // Simulate connection (in real implementation, you'd use Web Serial API)
+                connected = true;
+                updateStatus('Connected', 'COM3', '9600');
+                addToMonitor('✓ Connected to Arduino on COM3');
+                addToMonitor('✓ Serial communication established');
+                addToMonitor('✓ Starting sensor data stream...');
+
+                // Start simulating sensor data
+                dataInterval = setInterval(() => {
+                    const temp = (20 + Math.random() * 40).toFixed(1);
+                    const vibration = (Math.random() * 50).toFixed(2);
+                    const pressure = (10 + Math.random() * 20).toFixed(1);
+                    const current = (1 + Math.random() * 5).toFixed(2);
+
+                    addToMonitor(`TEMP:${temp}°C | VIB:${vibration}Hz | PRESS:${pressure}PSI | CURR:${current}A`);
+                }, 2000);
+            }, 2000);
+        }
+
+        function disconnectArduino() {
+            if (!connected) {
+                addToMonitor('Arduino is not connected');
+                return;
+            }
+
+            if (dataInterval) {
+                clearInterval(dataInterval);
+                dataInterval = null;
+            }
+
+            connected = false;
+            updateStatus('Disconnected', 'Not connected', '9600');
+            addToMonitor('✗ Disconnected from Arduino');
+        }
+
+        function clearMonitor() {
+            const monitor = document.getElementById('serial-monitor');
+            monitor.innerHTML = '<div>Monitor cleared...</div>';
+        }
+
+        function exportData() {
+            const monitor = document.getElementById('serial-monitor');
+            const data = Array.from(monitor.children).map(child => child.textContent).join('\n');
+            
+            const blob = new Blob([data], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'arduino_serial_data.txt';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStatus('Ready to connect', 'Not connected', '9600');
+            addToMonitor('Serial monitor ready');
+            addToMonitor('Click "Connect" to start monitoring sensor data');
+        });
+    </script>
+</body>
+</html>

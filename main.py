@@ -1,30 +1,27 @@
 import csv
 from typing import List, Set, Dict, Any
-import datetime
+from datetime import datetime
 import random
 import asyncio
-import numpy as np
-import pickle
 import json
 import logging
-import platform
-import sys
-import os
 
 # Set up logger
 logger = logging.getLogger("pharma_downtime")
 logging.basicConfig(level=logging.INFO)
 
-from fastapi import FastAPI, Response, WebSocket
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
+from fastapi.websockets import WebSocket, WebSocketDisconnect
+import uvicorn
 
-app = FastAPI(title="Pharma Downtime Project", version="1.0")
+app = FastAPI(title="Pharma Downtime Monitoring System")
 
-# Mount pharma-dashboard files
-app.mount("/static", StaticFiles(directory="pharma-dashboard"), name="static")
+# List to keep track of connected WebSocket clients
+connected_websockets = []
 
-# CORS Middleware
+# CORS middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -33,377 +30,480 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Endpoint: Serve CSV as JSON
-@app.get("/csv-data")
-def get_csv_data() -> Dict[str, Any]:
-    data = []
-    try:
-        with open("downtime_data.csv", newline="") as csvfile:
-            reader = csv.DictReader(csvfile)
-            for row in reader:
-                row["temperature"] = float(row["temperature"])
-                row["vibration"] = float(row["vibration"])
-                row["machine_load"] = float(row["machine_load"])
-                row["shift"] = int(row["shift"])
-                row["downtime_occurred"] = int(row["downtime_occurred"])
-                data.append(row)
-    except FileNotFoundError:
-        return {"data": [], "error": "CSV file not found"}
-    except Exception as e:
-        return {"data": [], "error": str(e)}
-    return {"data": data}
+# Global variables for sensor data
+sensor_data = {
+    "temperature": {"value": 25.4, "status": "online", "unit": "°C"},
+    "vibration": {"value": 3.2, "status": "online", "unit": "Hz"},
+    "pressure": {"value": 15.8, "status": "online", "unit": "PSI"},
+    "current": {"value": 2.1, "status": "online", "unit": "A"}
+}
 
-# Endpoint: Prediction
-@app.get("/predict")
-def predict_endpoint(temperature: float, vibration: float, load: float, shift: int) -> Dict[str, Any]:
-    try:
-        with open("app/ml/downtime_model.pkl", "rb") as f:
-            model = pickle.load(f)
-        features = [temperature, vibration, load, shift]
-        feature_array = np.array(features).reshape(1, -1)
+events_log = []
+
+# Try to import Raspberry Pi libraries
+try:
+    import RPi.GPIO as GPIO
+    RASPBERRY_PI = True
+    logger.info("✅ Raspberry Pi libraries loaded - REAL SENSOR MODE")
+except ImportError:
+    RASPBERRY_PI = False
+    logger.info("⚠️ Running in SIMULATION MODE - Raspberry Pi libraries not found")
+
+class SensorManager:
+    def __init__(self):
+        self.running = False
+        self.mode = "REAL SENSORS" if RASPBERRY_PI else "SIMULATION"
+        logger.info(f"🚀 SensorManager initialized in {self.mode} mode")
         
-        if hasattr(model, 'predict_proba'):
-            prob_result = model.predict_proba(feature_array)
-            prob = float(prob_result[0][1])
-            pred_result = model.predict(feature_array)
-            pred = pred_result[0]
-            return {
-                "temperature": temperature,
-                "vibration": vibration,
-                "load": load,
-                "shift": shift,
-                "downtime_probability": round(prob, 2),
-                "downtime_predicted": bool(pred)
-            }
+    async def read_sensors(self):
+        """Read data from all sensors"""
+        global sensor_data
+        
+        if RASPBERRY_PI:
+            # REAL SENSOR MODE - would read from actual hardware
+            pass
         else:
-            pred_array = model.predict(feature_array)
-            pred_final = pred_array[0]
-            return {
-                "temperature": temperature,
-                "vibration": vibration,
-                "load": load,
-                "shift": shift,
-                "downtime_predicted": bool(pred_final)
-            }
-    except Exception as e:
-        return {"error": str(e)}
-
-# Dashboard data endpoints
-@app.get("/api/dashboard/stats")
-def get_dashboard_stats() -> Dict[str, Any]:
-    """Get dashboard statistics"""
-    return {
-        "total_downtimes": random.randint(60, 70),
-        "avg_risk": round(random.uniform(0.5, 0.6), 2),
-        "machines_online": 3,
-        "machines_offline": 7
-    }
-
-@app.get("/api/dashboard/events")
-def get_recent_events() -> Dict[str, Any]:
-    """Get recent machine events"""
-    events = []
-    machine_names = ["Machine1", "Machine2", "Machine3"]
+            # SIMULATION MODE - Generate realistic pharmaceutical sensor data
+            sensor_data["temperature"]["value"] = round(20 + random.uniform(0, 40), 1)
+            sensor_data["temperature"]["status"] = "online"
+            
+            sensor_data["vibration"]["value"] = round(random.uniform(0, 10), 2)
+            sensor_data["vibration"]["status"] = "online"
+            
+            sensor_data["pressure"]["value"] = round(10 + random.uniform(0, 20), 1)
+            sensor_data["pressure"]["status"] = "online"
+            
+            sensor_data["current"]["value"] = round(1 + random.uniform(0, 5), 2)
+            sensor_data["current"]["status"] = "online"
     
-    for _ in range(random.randint(10, 15)):
-        event_time = datetime.datetime.now() - datetime.timedelta(minutes=random.randint(1, 300))
-        temp = round(random.uniform(60, 95), 1)
-        vib = round(random.uniform(1.5, 5.0), 1)
-        risk_percent = round(random.uniform(10, 90), 1)
+    async def log_event(self):
+        """Log sensor readings as events"""
+        global events_log
         
-        if temp > 85 or vib > 4.0:
-            status = "CRITICAL"
-        elif temp > 75 or vib > 3.0:
+        now = datetime.now()
+        temp = sensor_data["temperature"]["value"]
+        vib = sensor_data["vibration"]["value"]
+        risk = random.uniform(30, 90)
+        
+        # Determine status based on thresholds
+        status = "OK"
+        if temp > 50 or vib > 5:
             status = "WARNING"
-        else:
-            status = "OK"
+        if temp > 70 or vib > 8:
+            status = "CRITICAL"
         
-        events.append({
-            "time": event_time.strftime("%I:%M %p"),
-            "machine": random.choice(machine_names),
-            "temp": temp,
-            "vib": vib,
-            "risk": f"{risk_percent}%",
-            "status": status
-        })
-    
-    return {"events": events}
-
-@app.get("/api/dashboard/machines")
-def get_machine_list() -> Dict[str, Any]:
-    """Get list of machines for dropdown"""
-    machines = [
-        {"id": "Machine1", "name": "Machine1"},
-        {"id": "Machine2", "name": "Machine2"},
-        {"id": "Machine3", "name": "Machine3"}
-    ]
-    return {"machines": machines}
-
-@app.get("/api/dashboard/chart/{machine_id}")
-def get_machine_chart_data(machine_id: str) -> Dict[str, Any]:
-    """Get chart data for specific machine"""
-    timestamps = []
-    risk_values = []
-    base_time = datetime.datetime.now() - datetime.timedelta(hours=2)
-    
-    for i in range(120):
-        timestamp = base_time + datetime.timedelta(minutes=i)
-        timestamps.append(timestamp.strftime("%I:%M %p"))
+        machine_prefix = "REAL-" if RASPBERRY_PI else "SIM-"
         
-        if i < 30:
-            risk = round(random.uniform(0.6, 0.9), 2)
-        elif i < 60:
-            risk = round(random.uniform(0.4, 0.7), 2)
-        elif i < 90:
-            risk = round(random.uniform(0.7, 1.0), 2)
-        else:
-            risk = round(random.uniform(0.3, 0.6), 2)
+        event = {
+            "time": now.strftime("%I:%M %p"),
+            "machine": f"{machine_prefix}Machine{random.randint(1, 3)}",
+            "temp": f"{temp}°C",
+            "vib": str(vib),
+            "risk": f"{risk:.1f}%",
+            "status": status,
+            "timestamp": now.isoformat(),
+            "mode": self.mode
+        }
+        
+        events_log.insert(0, event)
+        events_log = events_log[:50]
+    
+    async def start_monitoring(self):
+        """Start continuous sensor monitoring"""
+        self.running = True
+        logger.info(f"🔄 Starting sensor monitoring in {self.mode} mode...")
+        
+        while self.running:
+            await self.read_sensors()
+            await self.log_event()
+            await asyncio.sleep(5)
+
+sensor_manager = SensorManager()
+
+# Clean HTML Dashboard
+dashboard_html = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharma Downtime Monitoring Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f1f5f9; min-height: 100vh; }
+        .sidebar { position: fixed; left: 0; top: 0; width: 80px; height: 100vh; background: #2563eb; display: flex; flex-direction: column; align-items: center; padding: 20px 0; z-index: 1000; }
+        .sidebar-icon { width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; cursor: pointer; transition: all 0.3s ease; color: white; font-size: 20px; }
+        .sidebar-icon:hover { background: rgba(255,255,255,0.2); }
+        .sidebar-icon.active { background: rgba(255,255,255,0.3); }
+        .main-content { margin-left: 80px; padding: 0; }
+        .header { background: white; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .logo-text { color: #2563eb; font-size: 1.5rem; font-weight: bold; }
+        .status-badge { padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; background: #10b981; color: white; }
+        .mode-badge { padding: 6px 12px; border-radius: 15px; font-size: 0.8rem; margin-left: 10px; background: #f59e0b; color: white; }
+        .dashboard-content { padding: 30px; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .metric-card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 5px solid #2563eb; }
+        .metric-header { color: #6b7280; font-size: 0.9rem; margin-bottom: 10px; }
+        .metric-value { display: flex; align-items: center; gap: 10px; font-size: 2rem; font-weight: bold; color: #1f2937; }
+        .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .chart-section, .events-section { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .events-table { width: 100%; border-collapse: collapse; }
+        .events-table th { background: #f8fafc; padding: 15px; text-align: left; color: #6b7280; font-weight: 600; border-bottom: 2px solid #e5e7eb; }
+        .events-table td { padding: 15px; border-bottom: 1px solid #e5e7eb; color: #1f2937; }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 500; transition: all 0.3s ease; }
+        .filter-buttons { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .filter-btn { padding: 8px 16px; border: 2px solid; border-radius: 20px; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all 0.3s ease; background: white; }
+        .filter-btn.active { color: white !important; }
+        .filter-btn.all { border-color: #2563eb; color: #2563eb; }
+        .filter-btn.all.active { background: #2563eb; }
+        .filter-btn.critical { border-color: #ef4444; color: #ef4444; }
+        .filter-btn.critical.active { background: #ef4444; }
+        .filter-btn.warning { border-color: #f59e0b; color: #f59e0b; }
+        .filter-btn.warning.active { background: #f59e0b; }
+        .filter-btn.ok { border-color: #10b981; color: #10b981; }
+        .filter-btn.ok.active { background: #10b981; }
+        .status-icon { display: inline-flex; align-items: center; gap: 5px; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
+        .status-critical { background: #fee2e2; color: #dc2626; }
+        .status-warning { background: #fef3c7; color: #92400e; }
+        .status-ok { background: #dcfce7; color: #166534; }
+        .toast { position: fixed; top: 20px; right: 20px; background: #10b981; color: white; padding: 15px 20px; border-radius: 8px; z-index: 3000; transform: translateX(400px); transition: transform 0.3s ease; }
+        .toast.show { transform: translateX(0); }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-icon active" title="Dashboard" onclick="showSection('dashboard')">📊</div>
+        <div class="sidebar-icon" title="Machines" onclick="showSection('machines')">⚙️</div>
+        <div class="sidebar-icon" title="Settings" onclick="showSection('settings')">⚙️</div>
+        <div class="sidebar-icon" title="Notifications" onclick="showSection('notifications')">🔔</div>
+    </div>
+
+    <div class="main-content">
+        <header class="header">
+            <div class="header-left">
+                <div class="logo-text">📊 Pharma Downtime Monitoring</div>
+                <div class="status-badge">Live</div>
+                <div class="mode-badge">🎭 SIMULATION</div>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button class="btn" style="background: #2563eb; color: white;" onclick="showToast('Add Machine modal opened!')">Add Machine</button>
+                <button class="btn" style="background: #1e40af; color: white;" onclick="showToast('Admin panel accessed!')">Admin</button>
+                <div style="background: #2563eb; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="showToast('User profile opened!')">👤</div>
+            </div>
+        </header>
+
+        <div class="dashboard-content" id="dashboard-section">
+            <div class="metrics-grid">
+                <div class="metric-card" style="border-left-color: #ef4444;">
+                    <div class="metric-header">Temperature</div>
+                    <div class="metric-value">
+                        <span style="color: #ef4444;">🌡️</span>
+                        <span id="temp-value">25.4°C</span>
+                    </div>
+                </div>
+                <div class="metric-card" style="border-left-color: #f59e0b;">
+                    <div class="metric-header">Vibration</div>
+                    <div class="metric-value">
+                        <span style="color: #f59e0b;">📳</span>
+                        <span id="vib-value">3.2 Hz</span>
+                    </div>
+                </div>
+                <div class="metric-card" style="border-left-color: #10b981;">
+                    <div class="metric-header">Pressure</div>
+                    <div class="metric-value">
+                        <span style="color: #10b981;">📏</span>
+                        <span id="pressure-value">15.8 PSI</span>
+                    </div>
+                </div>
+                <div class="metric-card" style="border-left-color: #2563eb;">
+                    <div class="metric-header">Current</div>
+                    <div class="metric-value">
+                        <span style="color: #2563eb;">⚡</span>
+                        <span id="current-value">2.1 A</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-grid">
+                <div class="chart-section">
+                    <h3>📈 Live Sensor Data</h3>
+                    <div style="margin: 20px 0;">
+                        <div>Temperature: <span style="color: #10b981; font-weight: bold;">Online</span></div>
+                        <div>Vibration: <span style="color: #10b981; font-weight: bold;">Online</span></div>
+                        <div>Pressure: <span style="color: #10b981; font-weight: bold;">Online</span></div>
+                        <div>Current: <span style="color: #10b981; font-weight: bold;">Online</span></div>
+                        <div style="margin-top: 15px; padding: 10px; background: #f8fafc; border-radius: 8px;">
+                            <strong>Mode:</strong> SIMULATION
+                        </div>
+                    </div>
+                </div>
+
+                <div class="events-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3>📊 Recent Events</h3>
+                        <button class="btn" style="background: #10b981; color: white; font-size: 0.9rem;" onclick="exportEvents()">⬇️ Export</button>
+                    </div>
+                    
+                    <div class="filter-buttons">
+                        <button class="filter-btn all active" onclick="filterEvents('all')">🔵 ALL</button>
+                        <button class="filter-btn critical" onclick="filterEvents('critical')">🔴 CRITICAL</button>
+                        <button class="filter-btn warning" onclick="filterEvents('warning')">🟡 WARNING</button>
+                        <button class="filter-btn ok" onclick="filterEvents('ok')">🟢 OK</button>
+                    </div>
+                    
+                    <table class="events-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Machine</th>
+                                <th>Temp</th>
+                                <th>Vib</th>
+                                <th>Risk</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="events-tbody">
+                            <tr>
+                                <td>02:15 PM</td>
+                                <td>SIM-Machine1</td>
+                                <td>35.2°C</td>
+                                <td>4.1</td>
+                                <td>45.8%</td>
+                                <td><span class="status-icon status-ok">🟢 OK</span></td>
+                            </tr>
+                            <tr>
+                                <td>02:10 PM</td>
+                                <td>SIM-Machine2</td>
+                                <td>58.7°C</td>
+                                <td>6.3</td>
+                                <td>72.4%</td>
+                                <td><span class="status-icon status-warning">🟡 WARNING</span></td>
+                            </tr>
+                            <tr>
+                                <td>02:05 PM</td>
+                                <td>SIM-Machine3</td>
+                                <td>75.1°C</td>
+                                <td>8.9</td>
+                                <td>89.2%</td>
+                                <td><span class="status-icon status-critical">🔴 CRITICAL</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-content" id="machines-section" style="display: none;">
+            <h2>🔧 Machine Management</h2>
+            <p>Machine configuration and status management.</p>
+        </div>
+
+        <div class="dashboard-content" id="settings-section" style="display: none;">
+            <h2>⚙️ System Settings</h2>
+            <p>System configuration options.</p>
+        </div>
+
+        <div class="dashboard-content" id="notifications-section" style="display: none;">
+            <h2>🔔 Notifications</h2>
+            <p>Alert and notification management.</p>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        let currentFilter = 'all';
+        let allEvents = [
+            {time: "02:15 PM", machine: "SIM-Machine1", temp: "35.2°C", vib: "4.1", risk: "45.8%", status: "OK"},
+            {time: "02:10 PM", machine: "SIM-Machine2", temp: "58.7°C", vib: "6.3", risk: "72.4%", status: "WARNING"},
+            {time: "02:05 PM", machine: "SIM-Machine3", temp: "75.1°C", vib: "8.9", risk: "89.2%", status: "CRITICAL"}
+        ];
+        
+        function updateSensorValues() {
+            const temp = (20 + Math.random() * 40).toFixed(1);
+            const vib = (Math.random() * 10).toFixed(1);
+            const pressure = (10 + Math.random() * 20).toFixed(1);
+            const current = (1 + Math.random() * 5).toFixed(1);
             
-        risk_values.append(risk)
-    
-    return {
-        "machine_id": machine_id,
-        "timestamps": timestamps,
-        "risk": risk_values
-    }
-
-@app.get("/api/generate-sample-data")
-def generate_sample_data() -> Dict[str, Any]:
-    """Generate sample data for testing"""
-    sample_data = []
-    machine_ids = ["Machine1", "Machine2", "Machine3"]
-    
-    for _ in range(100):
-        temp = round(random.uniform(65, 95), 1)
-        vib = round(random.uniform(1.0, 5.0), 1)
-        load = round(random.uniform(70, 100), 1)
-        shift = random.randint(1, 3)
-        downtime = 1 if (temp > 85 or vib > 4.0 or load > 95) else 0
+            document.getElementById('temp-value').textContent = temp + '°C';
+            document.getElementById('vib-value').textContent = vib + ' Hz';
+            document.getElementById('pressure-value').textContent = pressure + ' PSI';
+            document.getElementById('current-value').textContent = current + ' A';
+        }
         
-        sample_data.append({
-            "machine_id": random.choice(machine_ids),
-            "temperature": temp,
-            "vibration": vib,
-            "machine_load": load,
-            "shift": shift,
-            "downtime_occurred": downtime
-        })
-    
-    try:
-        with open("downtime_data.csv", "w", newline="") as csvfile:
-            fieldnames = ["machine_id", "temperature", "vibration", "machine_load", "shift", "downtime_occurred"]
-            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-            writer.writeheader()
-            writer.writerows(sample_data)
-        return {"message": f"Generated {len(sample_data)} sample records", "success": True}
-    except Exception as e:
-        return {"error": str(e), "success": False}
-
-# Advanced Analytics endpoint
-@app.get("/api/advanced-analytics")
-def get_advanced_analytics() -> Dict[str, Any]:
-    """Get advanced analytics data including ML predictions and trends"""
-    # Generate historical efficiency data
-    historical_data = []
-    for i in range(30):
-        date = datetime.datetime.now() - datetime.timedelta(days=i)
-        efficiency = round(random.uniform(75, 95), 1)
-        downtimes = random.randint(0, 5)
-        historical_data.append({
-            "date": date.strftime("%Y-%m-%d"),
-            "efficiency": efficiency,
-            "downtimes": downtimes
-        })
-    
-    # Generate predictions
-    predictions = []
-    for i in range(1, 8):
-        future_date = datetime.datetime.now() + datetime.timedelta(days=i)
-        risk_score = round(random.uniform(0.2, 0.8), 2)
-        predicted_efficiency = round(random.uniform(80, 95), 1)
-        predictions.append({
-            "date": future_date.strftime("%Y-%m-%d"),
-            "risk_score": risk_score,
-            "predicted_efficiency": predicted_efficiency
-        })
-    
-    return {
-        "historical_trends": historical_data,
-        "ml_predictions": predictions,
-        "model_accuracy": round(random.uniform(87, 94), 1),
-        "insights": {
-            "top_risk_factors": ["High Temperature", "Excessive Vibration", "Overload"],
-            "recommended_actions": ["Schedule maintenance for Machine2", "Check cooling system"],
-            "efficiency_trend": "improving"
-        },
-        "last_updated": datetime.datetime.now().isoformat()
-    }
-
-# Admin operations
-@app.get("/api/admin/settings")
-def get_admin_settings() -> Dict[str, Any]:
-    """Get admin dashboard settings"""
-    return {
-        "alert_thresholds": {"temperature": 85.0, "vibration": 4.0, "risk": 0.8},
-        "notification_settings": {"email_alerts": True, "sms_alerts": False, "dashboard_alerts": True},
-        "system_info": {"version": "1.0", "uptime": "72h 34m", "last_backup": "2024-01-15 10:30:00"},
-        "users": [
-            {"id": 1, "name": "Admin User", "role": "administrator", "last_login": "2024-01-15 14:30:00"},
-            {"id": 2, "name": "Operator", "role": "operator", "last_login": "2024-01-15 13:45:00"}
-        ]
-    }
-
-@app.post("/api/admin/add-machine")
-def add_machine() -> Dict[str, Any]:
-    """Add new machine to monitoring system"""
-    new_machine_id = f"Machine{random.randint(4, 10)}"
-    return {
-        "success": True,
-        "message": f"Machine {new_machine_id} added successfully",
-        "machine_id": new_machine_id,
-        "initial_status": "Online",
-        "initial_risk": round(random.uniform(0.1, 0.3), 2)
-    }
-
-# Hardware sensor endpoints
-@app.post("/api/hardware/sensor-data")
-async def receive_sensor_data(sensor_data: dict) -> Dict[str, Any]:
-    """Receive real-time sensor data from Raspberry Pi"""
-    try:
-        # Store sensor data (you can add database storage here)
-        logger.info(f"Received sensor data from {sensor_data.get('machine_id')}")
-        
-        # Broadcast to connected WebSocket clients
-        if clients:
-            message = {
-                "type": "sensor_update",
-                **sensor_data
-            }
-            disconnected_clients = set()
-            for client in clients:
-                try:
-                    await client.send_text(json.dumps(message))
-                except:
-                    disconnected_clients.add(client)
+        function addNewEvent() {
+            const now = new Date();
+            const temp = (20 + Math.random() * 60).toFixed(1);
+            const vib = (Math.random() * 10).toFixed(1);
+            const risk = (Math.random() * 100).toFixed(1);
+            const statuses = ['OK', 'WARNING', 'CRITICAL'];
+            const status = statuses[Math.floor(Math.random() * statuses.length)];
             
-            # Remove disconnected clients
-            clients -= disconnected_clients
+            const newEvent = {
+                time: now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                machine: `SIM-Machine${Math.floor(Math.random() * 3) + 1}`,
+                temp: temp + '°C',
+                vib: vib,
+                risk: risk + '%',
+                status: status
+            };
+            
+            allEvents.unshift(newEvent);
+            allEvents = allEvents.slice(0, 20);
+            renderEvents();
+        }
         
-        return {"status": "success", "message": "Sensor data received"}
-        
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
-
-@app.get("/api/hardware/machines")
-def get_hardware_machines() -> Dict[str, Any]:
-    """Get list of connected hardware machines"""
-    # In production, this would query a database of registered devices
-    return {
-        "machines": [
-            {
-                "id": "Machine1",
-                "name": "Tablet Press 1", 
-                "location": "Production Floor A",
-                "status": "online",
-                "last_seen": datetime.datetime.now().isoformat(),
-                "sensors": ["MLX90614", "DHT22", "ADXL335"]
-            },
-            {
-                "id": "Machine2", 
-                "name": "Mixer Unit 1",
-                "location": "Production Floor B", 
-                "status": "online",
-                "last_seen": datetime.datetime.now().isoformat(),
-                "sensors": ["MLX90614", "DHT22", "ADXL335"]
+        function renderEvents() {
+            const tbody = document.getElementById('events-tbody');
+            let filteredEvents = allEvents;
+            
+            if (currentFilter !== 'all') {
+                filteredEvents = allEvents.filter(event => 
+                    event.status.toLowerCase() === currentFilter.toLowerCase()
+                );
             }
-        ]
-    }
+            
+            tbody.innerHTML = filteredEvents.map(event => {
+                const statusIcon = event.status === 'CRITICAL' ? '🔴' : 
+                                 event.status === 'WARNING' ? '🟡' : '🟢';
+                const statusClass = event.status === 'CRITICAL' ? 'status-critical' : 
+                                   event.status === 'WARNING' ? 'status-warning' : 'status-ok';
+                
+                return `
+                    <tr>
+                        <td>${event.time}</td>
+                        <td>${event.machine}</td>
+                        <td>${event.temp}</td>
+                        <td>${event.vib}</td>
+                        <td>${event.risk}</td>
+                        <td><span class="status-icon ${statusClass}">${statusIcon} ${event.status}</span></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function filterEvents(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.filter-btn.' + filter).classList.add('active');
+            renderEvents();
+        }
+        
+        function showSection(section) {
+            document.querySelectorAll('[id$="-section"]').forEach(el => el.style.display = 'none');
+            document.getElementById(section + '-section').style.display = 'block';
+            document.querySelectorAll('.sidebar-icon').forEach(icon => icon.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        function exportEvents() {
+            showToast('Events exported successfully!');
+        }
+        
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        // Start live updates
+        setInterval(updateSensorValues, 3000);
+        setInterval(addNewEvent, 8000);
+        
+        console.log('Dashboard loaded successfully - Live data updating every 3 seconds');
+    </script>
+</body>
+</html>
+"""
 
-@app.get("/api/hardware/status/{machine_id}")
-def get_machine_status(machine_id: str) -> Dict[str, Any]:
-    """Get detailed status of specific hardware machine"""
+# API Routes
+@app.get("/", response_class=HTMLResponse)
+async def dashboard():
+    return dashboard_html
+
+@app.get("/api/sensors")
+async def get_sensors():
     return {
-        "machine_id": machine_id,
-        "status": "online",
-        "uptime": "72h 15m",
-        "sensor_health": {
-            "MLX90614": "healthy",
-            "DHT22": "healthy", 
-            "ADXL335": "healthy"
-        },
-        "last_readings": {
-            "temperature": round(random.uniform(20, 30), 2),
-            "humidity": round(random.uniform(40, 60), 2),
-            "vibration": round(random.uniform(1.0, 3.0), 3)
-        },
-        "wifi_signal": random.randint(-70, -30),
-        "battery_level": random.randint(75, 100)
+        **sensor_data,
+        "mode": sensor_manager.mode,
+        "raspberry_pi": RASPBERRY_PI
     }
 
-# Add a new endpoint for environment status
-@app.get("/api/system/environment")
-def get_environment_status() -> Dict[str, Any]:
-    """Get system environment status"""
+@app.get("/api/events")
+async def get_events():
+    return events_log
+
+@app.on_event("startup")
+async def startup_event():
+    asyncio.create_task(sensor_manager.start_monitoring())
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
+# API Routes
+@app.get("/", response_class=HTMLResponse)
+async def dashboard():
+    return dashboard_html
+
+@app.get("/api/sensors")
+async def get_sensors():
     return {
-        "python_version": sys.version,
-        "platform": platform.platform(),
-        "architecture": platform.architecture(),
-        "processor": platform.processor(),
-        "virtual_env": sys.prefix != sys.base_prefix,
-        "working_directory": os.getcwd(),
-        "python_executable": sys.executable
+        **sensor_data,
+        "mode": sensor_manager.mode,
+        "raspberry_pi": RASPBERRY_PI
     }
 
-# Root endpoint - serve your pharma-dashboard index.html
-@app.get("/")
-def root() -> Response:
-    try:
-        # Try to serve React build first, then fall back to HTML
-        try:
-            with open("pharma-dashboard/build/index.html", "r", encoding="utf-8") as file:
-                html_content = file.read()
-            return Response(content=html_content, media_type="text/html")
-        except FileNotFoundError:
-            # Fall back to standalone HTML dashboard
-            with open("pharma-dashboard/index.html", "r", encoding="utf-8") as file:
-                html_content = file.read()
-            return Response(content=html_content, media_type="text/html")
-    except FileNotFoundError:
-        return Response(
-            content="<h1>Dashboard not found</h1><p>Please make sure your pharma-dashboard folder contains index.html or build the React app</p>", 
-            media_type="text/html"
-        )
+@app.get("/api/events")
+async def get_events():
+    return events_log
 
-# Serve React static files if they exist
-@app.get("/static/js/{filename}")
-async def serve_react_js(filename: str):
-    try:
-        with open(f"pharma-dashboard/build/static/js/{filename}", "rb") as file:
-            content = file.read()
-        return Response(content=content, media_type="application/javascript")
-    except FileNotFoundError:
-        return Response(status_code=404)
-
-@app.get("/static/css/{filename}")
-async def serve_react_css(filename: str):
-    try:
-        with open(f"pharma-dashboard/build/static/css/{filename}", "rb") as file:
-            content = file.read()
-        return Response(content=content, media_type="text/css")
-    except FileNotFoundError:
-        return Response(status_code=404)
-
-# WebSocket for real-time monitoring
-clients: Set[WebSocket] = set()
-
-@app.websocket("/ws/monitor")
-async def websocket_monitor(websocket: WebSocket) -> None:
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
-    clients.add(websocket)
+    connected_websockets.append(websocket)
+    
     try:
+        # Send initial sensor data immediately upon connection
+        await websocket.send_text(json.dumps({
+            "type": "sensor_update",
+            "data": {
+                **sensor_data,
+                "mode": sensor_manager.mode,
+                "raspberry_pi": RASPBERRY_PI
+            }
+        }))
+        
         while True:
-            await asyncio.sleep(10)
-    except Exception:
-        pass
-    finally:
-        clients.discard(websocket)
+            # Keep connection alive and listen for messages
+            try:
+                data = await asyncio.wait_for(websocket.receive_text(), timeout=1.0)
+                # Echo back any received data
+                await websocket.send_text(f"Received: {data}")
+            except asyncio.TimeoutError:
+                # Send periodic ping to keep connection alive
+                await websocket.send_text(json.dumps({
+                    "type": "ping",
+                    "data": "connection_alive"
+                }))
+    except WebSocketDisconnect:
+        if websocket in connected_websockets:
+            connected_websockets.remove(websocket)
+    except Exception as e:
+        logger.error(f"WebSocket error: {e}")
+        if websocket in connected_websockets:
+            connected_websockets.remove(websocket)
+
+@app.on_event("startup")
+async def startup_event():
+    # Start sensor monitoring in background
+    asyncio.create_task(sensor_manager.start_monitoring())
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    sensor_manager.running = False
+    if RASPBERRY_PI:
+        GPIO.cleanup()
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
