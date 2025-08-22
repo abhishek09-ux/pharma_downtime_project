@@ -7,6 +7,9 @@ import numpy as np
 import pickle
 import json
 import logging
+import platform
+import sys
+import os
 
 # Set up logger
 logger = logging.getLogger("pharma_downtime")
@@ -335,6 +338,20 @@ def get_machine_status(machine_id: str) -> Dict[str, Any]:
         },
         "wifi_signal": random.randint(-70, -30),
         "battery_level": random.randint(75, 100)
+    }
+
+# Add a new endpoint for environment status
+@app.get("/api/system/environment")
+def get_environment_status() -> Dict[str, Any]:
+    """Get system environment status"""
+    return {
+        "python_version": sys.version,
+        "platform": platform.platform(),
+        "architecture": platform.architecture(),
+        "processor": platform.processor(),
+        "virtual_env": sys.prefix != sys.base_prefix,
+        "working_directory": os.getcwd(),
+        "python_executable": sys.executable
     }
 
 # Root endpoint - serve your pharma-dashboard index.html
