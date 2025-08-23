@@ -6,7 +6,11 @@ import asyncio
 import json
 import logging
 import os
+import warnings
 from contextlib import asynccontextmanager
+
+# Suppress sklearn warnings for production
+warnings.filterwarnings('ignore', category=UserWarning, module='sklearn')
 
 # Set up logger
 logger = logging.getLogger("pharma_downtime")
@@ -471,8 +475,8 @@ class SensorManager:
         events_log.insert(0, event)
         events_log = events_log[:50]  # Keep last 50 events
         
-        # Save to database every 5th reading (to avoid too frequent DB writes)
-        if len(events_log) % 5 == 0:
+        # Save to database every 10th reading (to avoid too frequent DB writes)
+        if len(events_log) % 10 == 0:
             try:
                 from app.services.database_service import db_service
                 db_service.save_sensor_reading(sensor_data, machine_name)

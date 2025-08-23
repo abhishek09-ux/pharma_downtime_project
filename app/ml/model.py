@@ -7,6 +7,10 @@ from sklearn.metrics import classification_report, accuracy_score
 import joblib
 import os
 import logging
+import warnings
+
+# Suppress sklearn warnings for production
+warnings.filterwarnings('ignore', category=UserWarning, module='sklearn')
 
 logger = logging.getLogger(__name__)
 
@@ -161,14 +165,16 @@ def predict_downtime(ambient_temp, machine_temp, humidity, vibration, current, s
     try:
         model = joblib.load(MODEL_PATH)
         
-        # Prepare features
-        features = np.array([[ambient_temp, machine_temp, humidity, vibration, current, shift]])
+        # Create DataFrame with proper feature names to avoid sklearn warnings
+        feature_names = ['ambient_temp', 'machine_temp', 'humidity', 'vibration', 'current', 'shift']
+        features_df = pd.DataFrame([[ambient_temp, machine_temp, humidity, vibration, current, shift]], 
+                                 columns=feature_names)
         
         # Get prediction and probability
-        prediction = model.predict(features)[0]
+        prediction = model.predict(features_df)[0]
         
         if hasattr(model, 'predict_proba'):
-            probability = model.predict_proba(features)[0]
+            probability = model.predict_proba(features_df)[0]
             downtime_prob = probability[1]  # Probability of downtime (class 1)
         else:
             downtime_prob = float(prediction)

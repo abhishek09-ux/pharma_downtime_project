@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException
 from app.ml.model import predict_downtime
 from typing import Dict, Any
 import logging
+import pandas as pd
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
