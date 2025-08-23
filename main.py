@@ -440,40 +440,41 @@ class SensorManager:
             return "OK"
     
     async def log_event(self):
-        """Log sensor readings as events with realistic pharma data and save to database"""
+        """Log sensor readings as events only when sensors are actually connected and providing real data"""
         global events_log
+        
+        # Only log events if we have real sensor data (not "not_connected" status)
+        if (sensor_data["temperature"]["status"] == "not_connected" and 
+            sensor_data["machine_temperature"]["status"] == "not_connected" and
+            sensor_data["vibration"]["status"] == "not_connected" and 
+            sensor_data["load"]["status"] == "not_connected"):
+            # No real sensors connected, don't create any events
+            return
         
         now = datetime.now()
         risk_score = self.calculate_downtime_risk()
         status = self.get_status_from_risk(risk_score)
         
-        # Get current sensor values
-        amb_temp = sensor_data["temperature"]["value"]
-        machine_temp = sensor_data["machine_temperature"]["value"]
-        vibration = sensor_data["vibration"]["value"]
-        load = sensor_data["load"]["value"]
+        # Get current sensor values - only from connected sensors
+        amb_temp = sensor_data["temperature"]["value"] if sensor_data["temperature"]["status"] != "not_connected" else "N/A"
+        machine_temp = sensor_data["machine_temperature"]["value"] if sensor_data["machine_temperature"]["status"] != "not_connected" else "N/A"
+        vibration = sensor_data["vibration"]["value"] if sensor_data["vibration"]["status"] != "not_connected" else "N/A"
+        load = sensor_data["load"]["value"] if sensor_data["load"]["status"] != "not_connected" else "N/A"
         
-        # Determine machine prefix based on actual mode
-        machine_prefix = "PI-" if RASPBERRY_PI else "SIM-"
-        
-        # Create realistic machine names for pharmaceutical environment
-        machine_names = [
-            f"{machine_prefix}Tablet-Press-1",
-            f"{machine_prefix}Capsule-Filler-2", 
-            f"{machine_prefix}Coating-Pan-1",
-            f"{machine_prefix}Granulator-A",
-            f"{machine_prefix}Mixer-B1"
-        ]
-        
-        machine_name = random.choice(machine_names)
+        # Only create machine name if we have at least one real sensor connected
+        if RASPBERRY_PI:
+            machine_name = "PI-TempSensor-1"  # Real hardware sensor name
+        else:
+            # In development mode, only log events if explicitly testing
+            return
         
         event = {
             "time": now.strftime("%I:%M %p"),
             "machine": machine_name,
-            "ambient_temp": f"{amb_temp}°C",
-            "machine_temp": f"{machine_temp}°C", 
-            "vibration": f"{vibration}G",
-            "load": f"{load}%",
+            "ambient_temp": f"{amb_temp}°C" if amb_temp != "N/A" else "N/A",
+            "machine_temp": f"{machine_temp}°C" if machine_temp != "N/A" else "N/A", 
+            "vibration": f"{vibration}G" if vibration != "N/A" else "N/A",
+            "load": f"{load}%" if load != "N/A" else "N/A",
             "risk": f"{risk_score*100:.1f}%",
             "status": status,
             "timestamp": now.isoformat(),
@@ -713,30 +714,7 @@ dashboard_html = """
                             </tr>
                         </thead>
                         <tbody id="events-tbody">
-                            <tr>
-                                <td>02:15 PM</td>
-                                <td>SIM-Machine1</td>
-                                <td>35.2°C</td>
-                                <td>4.1</td>
-                                <td>45.8%</td>
-                                <td><span class="status-icon status-ok">🟢 OK</span></td>
-                            </tr>
-                            <tr>
-                                <td>02:10 PM</td>
-                                <td>SIM-Machine2</td>
-                                <td>58.7°C</td>
-                                <td>6.3</td>
-                                <td>72.4%</td>
-                                <td><span class="status-icon status-warning">🟡 WARNING</span></td>
-                            </tr>
-                            <tr>
-                                <td>02:05 PM</td>
-                                <td>SIM-Machine3</td>
-                                <td>75.1°C</td>
-                                <td>8.9</td>
-                                <td>89.2%</td>
-                                <td><span class="status-icon status-critical">🔴 CRITICAL</span></td>
-                            </tr>
+                            <!-- Events will be populated dynamically via WebSocket when real sensors are connected -->
                         </tbody>
                     </table>
                 </div>
