@@ -227,42 +227,53 @@ class SensorManager:
         data = ((adc[1] & 3) << 8) + adc[2]
         return data
         
-    def read_machine_load(self):
-        """Read machine load from power meter"""
+    def read_acs712_current(self):
+        """Read current from ACS712 current sensor"""
         try:
-            if HARDWARE_AVAILABLE and self.power_meter:
-                # Send PZEM-004T command to read power
-                command = b'\xB0\xC0\xA8\x01\x01\x00\x1E'
-                self.power_meter.write(command)
-                time.sleep(0.1)
+            if HARDWARE_AVAILABLE and self.spi:
+                # Read current sensor from MCP3008 channel 3
+                adc_value = self.read_adc_channel(3)
                 
-                response = self.power_meter.read(25)
-                if len(response) >= 25:
-                    # Parse power data (watts)
-                    power = int.from_bytes(response[9:13], byteorder='big') / 10.0
-                    
-                    # Convert to percentage (assume 1000W = 100% load)
-                    load_percentage = min(100.0, (power / 1000.0) * 100)
-                    return round(load_percentage, 1)
-                else:
-                    raise Exception("Invalid power meter response")
+                # Convert ADC value to voltage (0-3.3V for 1024 levels)
+                voltage = (adc_value * 3.3) / 1024.0
+                
+                # ACS712-20A: 2.5V = 0A, sensitivity = 100mV/A
+                # Current = (Voltage - 2.5V) / 0.1V per A
+                current_amps = (voltage - 2.5) / 0.1
+                current_amps = abs(current_amps)  # Take absolute value
+                
+                # Calculate machine load percentage (assume 10A = 100% load)
+                load_percentage = min(100.0, (current_amps / 10.0) * 100)
+                
+                return round(load_percentage, 1), round(current_amps, 2)
             else:
-                # Simulated load based on vibration + time patterns
-                base_load = 75  # Base load percentage
-                vibration_factor = (self.last_vibration - 1.0) * 10  # Higher vibration = higher load
-                time_factor = math.sin(time.time() * 0.02) * 15  # Slow load variation
-                noise = random.uniform(-5, 8)
-                load = base_load + vibration_factor + time_factor + noise
-                return round(max(50, min(100, load)), 1)
+                # Simulated current and load based on vibration + time patterns
+                base_current = 3.5  # Base current in amps
+                vibration_factor = (getattr(self, 'last_vibration', 2.0) - 1.0) * 0.8
+                time_factor = math.sin(time.time() * 0.02) * 1.2
+                noise = random.uniform(-0.3, 0.5)
+                current_amps = base_current + vibration_factor + time_factor + noise
+                current_amps = max(1.0, min(8.0, current_amps))  # Realistic range
+                
+                # Calculate load percentage
+                load_percentage = (current_amps / 8.0) * 100
+                
+                return round(load_percentage, 1), round(current_amps, 2)
                 
         except Exception as e:
-            logger.warning(f"Power meter read error: {e}, using simulated data")
-            # Fallback to simulated load
-            base_load = 75
-            time_factor = math.sin(time.time() * 0.02) * 15
-            noise = random.uniform(-5, 8)
-            load = base_load + time_factor + noise
-            return round(max(50, min(100, load)), 1)
+            logger.warning(f"ACS712 current sensor read error: {e}, using simulated data")
+            # Fallback to simulated data
+            base_current = 3.5
+            time_factor = math.sin(time.time() * 0.02) * 1.2
+            noise = random.uniform(-0.3, 0.5)
+            current_amps = max(1.0, min(8.0, base_current + time_factor + noise))
+            load_percentage = (current_amps / 8.0) * 100
+            return round(load_percentage, 1), round(current_amps, 2)
+
+    def read_machine_load(self):
+        """Legacy method - now calls read_acs712_current for compatibility"""
+        load_percentage, _ = self.read_acs712_current()
+        return load_percentage
 
     def get_current_shift(self):
         """Enhanced shift detection with RTC backup"""
