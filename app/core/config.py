@@ -80,7 +80,11 @@ class Settings:
     
     def __init__(self):
         """Initialize settings and detect Raspberry Pi"""
-        self.detect_raspberry_pi()
+        # Check for manual override environment variable
+        if os.getenv("FORCE_RASPBERRY_PI", "false").lower() == "true":
+            self.RASPBERRY_PI_MODE = True
+        else:
+            self.detect_raspberry_pi()
     
     def detect_raspberry_pi(self):
         """Detect if running on Raspberry Pi"""

@@ -76,6 +76,13 @@ events_log = []
 RASPBERRY_PI = settings.RASPBERRY_PI_MODE
 hardware_sensors = None
 
+# Check for manual Pi mode override
+FORCE_PI_MODE = os.getenv("FORCE_RASPBERRY_PI", "false").lower() == "true"
+
+if FORCE_PI_MODE:
+    logger.info("🔧 FORCE_RASPBERRY_PI enabled - Running in Pi mode without hardware")
+    RASPBERRY_PI = True
+
 # Try to import Raspberry Pi libraries and configure hardware
 if RASPBERRY_PI:
     try:
@@ -89,45 +96,53 @@ if RASPBERRY_PI:
         
         logger.info("✅ Raspberry Pi libraries loaded - REAL SENSOR MODE")
         
-        # CONFIGURE ACTUAL RASPBERRY PI HARDWARE
-        try:
-            # GPIO Setup
-            GPIO.setmode(GPIO.BCM)
-            GPIO.setwarnings(False)
-            
-            # DHT22 Temperature/Humidity sensor on configured GPIO pin
-            dht22 = adafruit_dht.DHT22(getattr(board, f'D{settings.DHT22_PIN}'))
-            
-            # I2C Setup for ADC
-            i2c = busio.I2C(board.SCL, board.SDA)
-            ads = ADS.ADS1115(i2c, address=settings.I2C_ADDRESSES["ads1115"])
-            
-            # Analog sensor channels based on configuration
-            vibration_x_channel = AnalogIn(ads, getattr(ADS, f'P{settings.MCP3008_CHANNELS["vibration_x"]}'))
-            vibration_y_channel = AnalogIn(ads, getattr(ADS, f'P{settings.MCP3008_CHANNELS["vibration_y"]}'))
-            vibration_z_channel = AnalogIn(ads, getattr(ADS, f'P{settings.MCP3008_CHANNELS["vibration_z"]}'))
-            current_channel = AnalogIn(ads, getattr(ADS, f'P{settings.MCP3008_CHANNELS["current"]}'))
-            
-            # Store hardware references
-            hardware_sensors = {
-                'dht22': dht22,
-                'ads': ads,
-                'vibration_channels': [vibration_x_channel, vibration_y_channel, vibration_z_channel],
-                'current_channel': current_channel
-            }
-            
-            logger.info(f"🔧 Raspberry Pi GPIO and sensors configured successfully")
-            logger.info(f"📍 DHT22 on GPIO {settings.DHT22_PIN}, ADS1115 on I2C address {hex(settings.I2C_ADDRESSES['ads1115'])}")
-            
-        except Exception as e:
-            logger.error(f"❌ Hardware configuration failed: {e}")
-            RASPBERRY_PI = False
-            hardware_sensors = None
+        # CONFIGURE ACTUAL RASPBERRY PI HARDWARE (skip if forced mode)
+        if not FORCE_PI_MODE:
+            try:
+                # GPIO Setup
+                GPIO.setmode(GPIO.BCM)
+                GPIO.setwarnings(False)
+                
+                # DHT22 Temperature/Humidity sensor on configured GPIO pin
+                dht22 = adafruit_dht.DHT22(getattr(board, f'D{settings.DHT22_PIN}'))
+                
+                # I2C Setup for ADC
+                i2c = busio.I2C(board.SCL, board.SDA)
+                ads = ADS.ADS1115(i2c, address=settings.I2C_ADDRESSES["ads1115"])
+                
+                # Analog sensor channels based on configuration
+                vibration_x_channel = AnalogIn(ads, getattr(ADS, f'P{settings.MCP3008_CHANNELS["vibration_x"]}'))
+                vibration_y_channel = AnalogIn(ads, getattr(ADS, f'P{settings.MCP3008_CHANNELS["vibration_y"]}'))
+                vibration_z_channel = AnalogIn(ads, getattr(ADS, f'P{settings.MCP3008_CHANNELS["vibration_z"]}'))
+                current_channel = AnalogIn(ads, getattr(ADS, f'P{settings.MCP3008_CHANNELS["current"]}'))
+                
+                # Store hardware references
+                hardware_sensors = {
+                    'dht22': dht22,
+                    'ads': ads,
+                    'vibration_channels': [vibration_x_channel, vibration_y_channel, vibration_z_channel],
+                    'current_channel': current_channel
+                }
+                
+                logger.info(f"🔧 Raspberry Pi GPIO and sensors configured successfully")
+                logger.info(f"📍 DHT22 on GPIO {settings.DHT22_PIN}, ADS1115 on I2C address {hex(settings.I2C_ADDRESSES['ads1115'])}")
+                
+            except Exception as e:
+                logger.error(f"❌ Hardware configuration failed: {e}")
+                if not FORCE_PI_MODE:
+                    RASPBERRY_PI = False
+                    hardware_sensors = None
+        else:
+            logger.info("⚠️ Hardware configuration skipped in FORCE mode")
             
     except ImportError as e:
-        RASPBERRY_PI = False
-        hardware_sensors = None
-        logger.info(f"⚠️ Pi libraries not available: {e}")
+        if not FORCE_PI_MODE:
+            RASPBERRY_PI = False
+            hardware_sensors = None
+            logger.info(f"⚠️ Pi libraries not available: {e}")
+        else:
+            logger.info(f"⚠️ Pi libraries not available in forced mode: {e}")
+            # Keep RASPBERRY_PI = True but hardware_sensors = None
 else:
     logger.info("⚠️ Running in SIMULATION MODE - Not detected as Raspberry Pi")
 
