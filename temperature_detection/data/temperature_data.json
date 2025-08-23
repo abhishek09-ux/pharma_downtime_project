@@ -1,0 +1,1766 @@
+[
+  {
+    "timestamp": "2025-08-23T12:48:06.686730",
+    "temperature_celsius": 22.5,
+    "temperature_fahrenheit": 72.5,
+    "sensor_id": "test-sensor"
+  },
+  {
+    "timestamp": "2025-08-23T12:48:06.708245",
+    "temperature_celsius": 20.22,
+    "temperature_fahrenheit": 68.4,
+    "sensor_id": "28-mock-sensor-id"
+  },
+  {
+    "timestamp": "2025-08-23T12:48:06.709833",
+    "temperature_celsius": 23.75,
+    "temperature_fahrenheit": 74.75,
+    "sensor_id": "28-mock-sensor-id"
+  },
+  {
+    "timestamp": "2025-08-23T12:48:06.737232",
+    "temperature_celsius": 22.82,
+    "temperature_fahrenheit": 73.08,
+    "sensor_id": "28-mock-sensor-id"
+  },
+  {
+    "timestamp": "2025-08-23T12:48:15.666060",
+    "temperature_celsius": 23.32,
+    "temperature_fahrenheit": 73.98,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:48:17.695785",
+    "temperature_celsius": 23.57,
+    "temperature_fahrenheit": 74.43,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:48:19.728812",
+    "temperature_celsius": 21.19,
+    "temperature_fahrenheit": 70.14,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:48:21.759649",
+    "temperature_celsius": 20.7,
+    "temperature_fahrenheit": 69.26,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:48:23.787439",
+    "temperature_celsius": 21.99,
+    "temperature_fahrenheit": 71.58,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:48:25.820954",
+    "temperature_celsius": 23.5,
+    "temperature_fahrenheit": 74.3,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:48:27.849833",
+    "temperature_celsius": 23.93,
+    "temperature_fahrenheit": 75.07,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:48:29.886001",
+    "temperature_celsius": 20.67,
+    "temperature_fahrenheit": 69.21,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:48:31.917934",
+    "temperature_celsius": 23.03,
+    "temperature_fahrenheit": 73.45,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:48:33.949239",
+    "temperature_celsius": 24.7,
+    "temperature_fahrenheit": 76.46,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:48:35.995247",
+    "temperature_celsius": 24.37,
+    "temperature_fahrenheit": 75.87,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:48:38.058479",
+    "temperature_celsius": 23.24,
+    "temperature_fahrenheit": 73.83,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:48:40.088635",
+    "temperature_celsius": 21.27,
+    "temperature_fahrenheit": 70.29,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:48:42.123999",
+    "temperature_celsius": 24.87,
+    "temperature_fahrenheit": 76.77,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:48:44.160857",
+    "temperature_celsius": 22.43,
+    "temperature_fahrenheit": 72.37,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:48:46.198579",
+    "temperature_celsius": 22.63,
+    "temperature_fahrenheit": 72.73,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:48:48.285365",
+    "temperature_celsius": 21.08,
+    "temperature_fahrenheit": 69.94,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:48:50.316989",
+    "temperature_celsius": 22.53,
+    "temperature_fahrenheit": 72.55,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:48:52.342479",
+    "temperature_celsius": 21.91,
+    "temperature_fahrenheit": 71.44,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:48:54.399043",
+    "temperature_celsius": 20.73,
+    "temperature_fahrenheit": 69.31,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:48:56.431261",
+    "temperature_celsius": 21.71,
+    "temperature_fahrenheit": 71.08,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:48:58.450938",
+    "temperature_celsius": 24.41,
+    "temperature_fahrenheit": 75.94,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:00.478169",
+    "temperature_celsius": 24.07,
+    "temperature_fahrenheit": 75.33,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:02.508427",
+    "temperature_celsius": 21.59,
+    "temperature_fahrenheit": 70.86,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:04.534121",
+    "temperature_celsius": 24.88,
+    "temperature_fahrenheit": 76.78,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:06.571621",
+    "temperature_celsius": 23.15,
+    "temperature_fahrenheit": 73.67,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:08.618758",
+    "temperature_celsius": 22.24,
+    "temperature_fahrenheit": 72.03,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:10.655134",
+    "temperature_celsius": 20.32,
+    "temperature_fahrenheit": 68.58,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:12.705749",
+    "temperature_celsius": 22.39,
+    "temperature_fahrenheit": 72.3,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:14.731263",
+    "temperature_celsius": 20.57,
+    "temperature_fahrenheit": 69.03,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:16.766485",
+    "temperature_celsius": 22.8,
+    "temperature_fahrenheit": 73.04,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:18.812121",
+    "temperature_celsius": 24.19,
+    "temperature_fahrenheit": 75.54,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:20.885096",
+    "temperature_celsius": 23.58,
+    "temperature_fahrenheit": 74.44,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:22.917869",
+    "temperature_celsius": 20.43,
+    "temperature_fahrenheit": 68.77,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:24.954658",
+    "temperature_celsius": 22.07,
+    "temperature_fahrenheit": 71.73,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:26.981873",
+    "temperature_celsius": 22.86,
+    "temperature_fahrenheit": 73.15,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:29.014032",
+    "temperature_celsius": 20.2,
+    "temperature_fahrenheit": 68.36,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:31.052911",
+    "temperature_celsius": 20.91,
+    "temperature_fahrenheit": 69.64,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:33.075691",
+    "temperature_celsius": 20.69,
+    "temperature_fahrenheit": 69.24,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:35.119736",
+    "temperature_celsius": 24.57,
+    "temperature_fahrenheit": 76.23,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:37.160460",
+    "temperature_celsius": 21.95,
+    "temperature_fahrenheit": 71.51,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:39.190421",
+    "temperature_celsius": 21.65,
+    "temperature_fahrenheit": 70.97,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:41.236608",
+    "temperature_celsius": 20.71,
+    "temperature_fahrenheit": 69.28,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:43.265527",
+    "temperature_celsius": 22.22,
+    "temperature_fahrenheit": 72.0,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:45.299362",
+    "temperature_celsius": 24.17,
+    "temperature_fahrenheit": 75.51,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:47.334550",
+    "temperature_celsius": 21.79,
+    "temperature_fahrenheit": 71.22,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:49.363089",
+    "temperature_celsius": 22.35,
+    "temperature_fahrenheit": 72.23,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:51.412296",
+    "temperature_celsius": 20.99,
+    "temperature_fahrenheit": 69.78,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:53.452316",
+    "temperature_celsius": 22.24,
+    "temperature_fahrenheit": 72.03,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:55.506885",
+    "temperature_celsius": 24.24,
+    "temperature_fahrenheit": 75.63,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:57.542678",
+    "temperature_celsius": 24.56,
+    "temperature_fahrenheit": 76.21,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:49:59.587463",
+    "temperature_celsius": 22.3,
+    "temperature_fahrenheit": 72.14,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:01.626569",
+    "temperature_celsius": 21.33,
+    "temperature_fahrenheit": 70.39,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:03.668555",
+    "temperature_celsius": 24.39,
+    "temperature_fahrenheit": 75.9,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:05.696043",
+    "temperature_celsius": 22.83,
+    "temperature_fahrenheit": 73.09,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:07.722405",
+    "temperature_celsius": 24.88,
+    "temperature_fahrenheit": 76.78,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:09.760216",
+    "temperature_celsius": 20.15,
+    "temperature_fahrenheit": 68.27,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:11.801326",
+    "temperature_celsius": 21.88,
+    "temperature_fahrenheit": 71.38,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:13.857341",
+    "temperature_celsius": 24.42,
+    "temperature_fahrenheit": 75.96,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:15.889662",
+    "temperature_celsius": 24.37,
+    "temperature_fahrenheit": 75.87,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:17.921550",
+    "temperature_celsius": 24.52,
+    "temperature_fahrenheit": 76.14,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:19.951905",
+    "temperature_celsius": 23.72,
+    "temperature_fahrenheit": 74.7,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:21.984147",
+    "temperature_celsius": 24.74,
+    "temperature_fahrenheit": 76.53,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:24.027882",
+    "temperature_celsius": 22.05,
+    "temperature_fahrenheit": 71.69,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:26.058912",
+    "temperature_celsius": 22.21,
+    "temperature_fahrenheit": 71.98,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:28.089995",
+    "temperature_celsius": 23.29,
+    "temperature_fahrenheit": 73.92,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:30.123961",
+    "temperature_celsius": 24.23,
+    "temperature_fahrenheit": 75.61,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:32.165513",
+    "temperature_celsius": 21.26,
+    "temperature_fahrenheit": 70.27,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:34.210457",
+    "temperature_celsius": 21.41,
+    "temperature_fahrenheit": 70.54,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:36.257691",
+    "temperature_celsius": 20.34,
+    "temperature_fahrenheit": 68.61,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:38.288265",
+    "temperature_celsius": 22.73,
+    "temperature_fahrenheit": 72.91,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:40.331154",
+    "temperature_celsius": 22.51,
+    "temperature_fahrenheit": 72.52,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:42.379656",
+    "temperature_celsius": 21.13,
+    "temperature_fahrenheit": 70.03,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:44.412340",
+    "temperature_celsius": 20.5,
+    "temperature_fahrenheit": 68.9,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:46.469255",
+    "temperature_celsius": 24.74,
+    "temperature_fahrenheit": 76.53,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:48.517883",
+    "temperature_celsius": 22.25,
+    "temperature_fahrenheit": 72.05,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:50.559838",
+    "temperature_celsius": 22.54,
+    "temperature_fahrenheit": 72.57,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:52.590687",
+    "temperature_celsius": 22.29,
+    "temperature_fahrenheit": 72.12,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:54.629156",
+    "temperature_celsius": 23.41,
+    "temperature_fahrenheit": 74.14,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:56.682496",
+    "temperature_celsius": 20.65,
+    "temperature_fahrenheit": 69.17,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:50:58.739907",
+    "temperature_celsius": 24.6,
+    "temperature_fahrenheit": 76.28,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:00.785081",
+    "temperature_celsius": 24.69,
+    "temperature_fahrenheit": 76.44,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:02.818824",
+    "temperature_celsius": 24.32,
+    "temperature_fahrenheit": 75.78,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:04.848817",
+    "temperature_celsius": 21.33,
+    "temperature_fahrenheit": 70.39,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:06.886690",
+    "temperature_celsius": 21.71,
+    "temperature_fahrenheit": 71.08,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:08.928328",
+    "temperature_celsius": 20.29,
+    "temperature_fahrenheit": 68.52,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:10.961971",
+    "temperature_celsius": 20.74,
+    "temperature_fahrenheit": 69.33,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:13.006795",
+    "temperature_celsius": 20.96,
+    "temperature_fahrenheit": 69.73,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:15.051368",
+    "temperature_celsius": 23.66,
+    "temperature_fahrenheit": 74.59,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:17.083535",
+    "temperature_celsius": 21.4,
+    "temperature_fahrenheit": 70.52,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:19.138358",
+    "temperature_celsius": 21.09,
+    "temperature_fahrenheit": 69.96,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:21.173854",
+    "temperature_celsius": 20.29,
+    "temperature_fahrenheit": 68.52,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:23.211915",
+    "temperature_celsius": 21.87,
+    "temperature_fahrenheit": 71.37,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:25.258212",
+    "temperature_celsius": 22.73,
+    "temperature_fahrenheit": 72.91,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:27.288520",
+    "temperature_celsius": 23.54,
+    "temperature_fahrenheit": 74.37,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:29.322233",
+    "temperature_celsius": 21.01,
+    "temperature_fahrenheit": 69.82,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:31.359551",
+    "temperature_celsius": 21.15,
+    "temperature_fahrenheit": 70.07,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:33.406081",
+    "temperature_celsius": 21.43,
+    "temperature_fahrenheit": 70.57,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:35.448685",
+    "temperature_celsius": 22.75,
+    "temperature_fahrenheit": 72.95,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:37.478255",
+    "temperature_celsius": 21.95,
+    "temperature_fahrenheit": 71.51,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:39.514588",
+    "temperature_celsius": 23.12,
+    "temperature_fahrenheit": 73.62,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:41.549853",
+    "temperature_celsius": 20.46,
+    "temperature_fahrenheit": 68.83,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:43.592954",
+    "temperature_celsius": 23.12,
+    "temperature_fahrenheit": 73.62,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:45.622645",
+    "temperature_celsius": 24.28,
+    "temperature_fahrenheit": 75.7,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:47.660709",
+    "temperature_celsius": 23.44,
+    "temperature_fahrenheit": 74.19,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:49.692342",
+    "temperature_celsius": 23.02,
+    "temperature_fahrenheit": 73.44,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:51.743607",
+    "temperature_celsius": 23.82,
+    "temperature_fahrenheit": 74.88,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:53.782787",
+    "temperature_celsius": 20.61,
+    "temperature_fahrenheit": 69.1,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:55.829354",
+    "temperature_celsius": 22.84,
+    "temperature_fahrenheit": 73.11,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:57.884904",
+    "temperature_celsius": 24.42,
+    "temperature_fahrenheit": 75.96,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:51:59.929530",
+    "temperature_celsius": 21.05,
+    "temperature_fahrenheit": 69.89,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:52:01.969292",
+    "temperature_celsius": 21.42,
+    "temperature_fahrenheit": 70.56,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:52:04.014366",
+    "temperature_celsius": 24.29,
+    "temperature_fahrenheit": 75.72,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:52:06.047375",
+    "temperature_celsius": 23.07,
+    "temperature_fahrenheit": 73.53,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:52:08.090870",
+    "temperature_celsius": 20.37,
+    "temperature_fahrenheit": 68.67,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:52:10.136286",
+    "temperature_celsius": 23.31,
+    "temperature_fahrenheit": 73.96,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:52:12.186250",
+    "temperature_celsius": 23.5,
+    "temperature_fahrenheit": 74.3,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:52:14.233551",
+    "temperature_celsius": 23.82,
+    "temperature_fahrenheit": 74.88,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:52:16.282034",
+    "temperature_celsius": 22.86,
+    "temperature_fahrenheit": 73.15,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:52:18.323504",
+    "temperature_celsius": 21.17,
+    "temperature_fahrenheit": 70.11,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:52:20.373846",
+    "temperature_celsius": 23.45,
+    "temperature_fahrenheit": 74.21,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:52:22.514522",
+    "temperature_celsius": 20.12,
+    "temperature_fahrenheit": 68.22,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:52:24.558256",
+    "temperature_celsius": 23.77,
+    "temperature_fahrenheit": 74.79,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:52:26.604438",
+    "temperature_celsius": 20.93,
+    "temperature_fahrenheit": 69.67,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:52:28.642372",
+    "temperature_celsius": 24.43,
+    "temperature_fahrenheit": 75.97,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:52:30.686682",
+    "temperature_celsius": 22.35,
+    "temperature_fahrenheit": 72.23,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:52:32.732951",
+    "temperature_celsius": 22.19,
+    "temperature_fahrenheit": 71.94,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:52:34.767205",
+    "temperature_celsius": 24.63,
+    "temperature_fahrenheit": 76.33,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:52:36.800858",
+    "temperature_celsius": 24.96,
+    "temperature_fahrenheit": 76.93,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:52:38.844069",
+    "temperature_celsius": 21.79,
+    "temperature_fahrenheit": 71.22,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:52:40.872843",
+    "temperature_celsius": 24.36,
+    "temperature_fahrenheit": 75.85,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:52:42.917206",
+    "temperature_celsius": 20.59,
+    "temperature_fahrenheit": 69.06,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:52:44.961204",
+    "temperature_celsius": 22.12,
+    "temperature_fahrenheit": 71.82,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:52:46.999439",
+    "temperature_celsius": 21.75,
+    "temperature_fahrenheit": 71.15,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:59:25.761654",
+    "temperature_celsius": 23.32,
+    "temperature_fahrenheit": 73.98,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:59:27.925336",
+    "temperature_celsius": 21.56,
+    "temperature_fahrenheit": 70.81,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:59:29.984768",
+    "temperature_celsius": 23.86,
+    "temperature_fahrenheit": 74.95,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:59:32.005036",
+    "temperature_celsius": 21.41,
+    "temperature_fahrenheit": 70.54,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:59:34.058496",
+    "temperature_celsius": 21.38,
+    "temperature_fahrenheit": 70.48,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:59:36.165080",
+    "temperature_celsius": 24.49,
+    "temperature_fahrenheit": 76.08,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:59:38.207913",
+    "temperature_celsius": 21.13,
+    "temperature_fahrenheit": 70.03,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:59:40.259781",
+    "temperature_celsius": 24.45,
+    "temperature_fahrenheit": 76.01,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:59:42.298200",
+    "temperature_celsius": 24.8,
+    "temperature_fahrenheit": 76.64,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:59:44.327562",
+    "temperature_celsius": 23.98,
+    "temperature_fahrenheit": 75.16,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:59:46.368224",
+    "temperature_celsius": 21.47,
+    "temperature_fahrenheit": 70.65,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:59:48.403448",
+    "temperature_celsius": 24.54,
+    "temperature_fahrenheit": 76.17,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:59:50.446500",
+    "temperature_celsius": 22.97,
+    "temperature_fahrenheit": 73.35,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:59:52.483962",
+    "temperature_celsius": 24.34,
+    "temperature_fahrenheit": 75.81,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:59:54.526993",
+    "temperature_celsius": 23.94,
+    "temperature_fahrenheit": 75.09,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:59:56.561255",
+    "temperature_celsius": 24.13,
+    "temperature_fahrenheit": 75.43,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T12:59:58.596396",
+    "temperature_celsius": 23.43,
+    "temperature_fahrenheit": 74.17,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:00.628697",
+    "temperature_celsius": 21.39,
+    "temperature_fahrenheit": 70.5,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:02.672433",
+    "temperature_celsius": 20.98,
+    "temperature_fahrenheit": 69.76,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:04.718758",
+    "temperature_celsius": 22.16,
+    "temperature_fahrenheit": 71.89,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:06.753732",
+    "temperature_celsius": 24.69,
+    "temperature_fahrenheit": 76.44,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:08.792704",
+    "temperature_celsius": 22.97,
+    "temperature_fahrenheit": 73.35,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:10.826941",
+    "temperature_celsius": 21.92,
+    "temperature_fahrenheit": 71.46,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:12.852133",
+    "temperature_celsius": 20.55,
+    "temperature_fahrenheit": 68.99,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:14.885478",
+    "temperature_celsius": 21.77,
+    "temperature_fahrenheit": 71.19,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:16.920191",
+    "temperature_celsius": 23.26,
+    "temperature_fahrenheit": 73.87,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:18.954307",
+    "temperature_celsius": 23.18,
+    "temperature_fahrenheit": 73.72,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:20.980454",
+    "temperature_celsius": 21.28,
+    "temperature_fahrenheit": 70.3,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:23.009143",
+    "temperature_celsius": 23.48,
+    "temperature_fahrenheit": 74.26,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:25.050234",
+    "temperature_celsius": 20.77,
+    "temperature_fahrenheit": 69.39,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:27.086260",
+    "temperature_celsius": 23.41,
+    "temperature_fahrenheit": 74.14,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:29.127033",
+    "temperature_celsius": 23.7,
+    "temperature_fahrenheit": 74.66,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:31.174013",
+    "temperature_celsius": 22.13,
+    "temperature_fahrenheit": 71.83,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:33.214193",
+    "temperature_celsius": 21.8,
+    "temperature_fahrenheit": 71.24,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:35.253461",
+    "temperature_celsius": 20.1,
+    "temperature_fahrenheit": 68.18,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:37.285615",
+    "temperature_celsius": 22.9,
+    "temperature_fahrenheit": 73.22,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:39.326476",
+    "temperature_celsius": 20.19,
+    "temperature_fahrenheit": 68.34,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:41.357477",
+    "temperature_celsius": 24.18,
+    "temperature_fahrenheit": 75.52,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:43.399303",
+    "temperature_celsius": 20.2,
+    "temperature_fahrenheit": 68.36,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:45.447390",
+    "temperature_celsius": 22.05,
+    "temperature_fahrenheit": 71.69,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:47.477990",
+    "temperature_celsius": 22.42,
+    "temperature_fahrenheit": 72.36,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:49.513760",
+    "temperature_celsius": 20.91,
+    "temperature_fahrenheit": 69.64,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:51.541672",
+    "temperature_celsius": 23.51,
+    "temperature_fahrenheit": 74.32,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:53.575909",
+    "temperature_celsius": 21.31,
+    "temperature_fahrenheit": 70.36,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:55.613625",
+    "temperature_celsius": 23.18,
+    "temperature_fahrenheit": 73.72,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:57.654824",
+    "temperature_celsius": 21.9,
+    "temperature_fahrenheit": 71.42,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:00:59.687344",
+    "temperature_celsius": 22.8,
+    "temperature_fahrenheit": 73.04,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:01.719182",
+    "temperature_celsius": 20.59,
+    "temperature_fahrenheit": 69.06,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:03.761812",
+    "temperature_celsius": 23.48,
+    "temperature_fahrenheit": 74.26,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:05.811171",
+    "temperature_celsius": 23.27,
+    "temperature_fahrenheit": 73.89,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:07.839358",
+    "temperature_celsius": 24.75,
+    "temperature_fahrenheit": 76.55,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:09.868596",
+    "temperature_celsius": 20.79,
+    "temperature_fahrenheit": 69.42,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:11.907470",
+    "temperature_celsius": 22.24,
+    "temperature_fahrenheit": 72.03,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:13.949618",
+    "temperature_celsius": 24.27,
+    "temperature_fahrenheit": 75.69,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:15.978343",
+    "temperature_celsius": 23.18,
+    "temperature_fahrenheit": 73.72,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:18.010869",
+    "temperature_celsius": 23.31,
+    "temperature_fahrenheit": 73.96,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:20.045706",
+    "temperature_celsius": 23.02,
+    "temperature_fahrenheit": 73.44,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:22.080514",
+    "temperature_celsius": 22.89,
+    "temperature_fahrenheit": 73.2,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:24.111267",
+    "temperature_celsius": 21.55,
+    "temperature_fahrenheit": 70.79,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:26.150439",
+    "temperature_celsius": 20.83,
+    "temperature_fahrenheit": 69.49,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:28.186601",
+    "temperature_celsius": 24.93,
+    "temperature_fahrenheit": 76.87,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:30.226276",
+    "temperature_celsius": 23.55,
+    "temperature_fahrenheit": 74.39,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:32.260955",
+    "temperature_celsius": 21.25,
+    "temperature_fahrenheit": 70.25,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:34.294891",
+    "temperature_celsius": 23.39,
+    "temperature_fahrenheit": 74.1,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:36.326227",
+    "temperature_celsius": 24.72,
+    "temperature_fahrenheit": 76.5,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:38.365068",
+    "temperature_celsius": 23.21,
+    "temperature_fahrenheit": 73.78,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:40.404177",
+    "temperature_celsius": 20.5,
+    "temperature_fahrenheit": 68.9,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:42.434633",
+    "temperature_celsius": 24.6,
+    "temperature_fahrenheit": 76.28,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:44.469718",
+    "temperature_celsius": 20.23,
+    "temperature_fahrenheit": 68.41,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:46.503756",
+    "temperature_celsius": 23.84,
+    "temperature_fahrenheit": 74.91,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:48.539747",
+    "temperature_celsius": 23.53,
+    "temperature_fahrenheit": 74.35,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:50.574080",
+    "temperature_celsius": 21.48,
+    "temperature_fahrenheit": 70.66,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:52.605278",
+    "temperature_celsius": 23.33,
+    "temperature_fahrenheit": 73.99,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:54.634658",
+    "temperature_celsius": 21.32,
+    "temperature_fahrenheit": 70.38,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:56.664180",
+    "temperature_celsius": 23.33,
+    "temperature_fahrenheit": 73.99,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:01:58.699554",
+    "temperature_celsius": 20.11,
+    "temperature_fahrenheit": 68.2,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:00.735177",
+    "temperature_celsius": 21.82,
+    "temperature_fahrenheit": 71.28,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:02.770713",
+    "temperature_celsius": 23.67,
+    "temperature_fahrenheit": 74.61,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:04.807599",
+    "temperature_celsius": 24.7,
+    "temperature_fahrenheit": 76.46,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:06.837720",
+    "temperature_celsius": 23.49,
+    "temperature_fahrenheit": 74.28,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:08.878670",
+    "temperature_celsius": 21.99,
+    "temperature_fahrenheit": 71.58,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:10.914163",
+    "temperature_celsius": 22.51,
+    "temperature_fahrenheit": 72.52,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:12.948979",
+    "temperature_celsius": 24.24,
+    "temperature_fahrenheit": 75.63,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:14.985038",
+    "temperature_celsius": 20.01,
+    "temperature_fahrenheit": 68.02,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:17.024796",
+    "temperature_celsius": 20.0,
+    "temperature_fahrenheit": 68.0,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:19.062110",
+    "temperature_celsius": 23.94,
+    "temperature_fahrenheit": 75.09,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:21.100092",
+    "temperature_celsius": 21.93,
+    "temperature_fahrenheit": 71.47,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:23.132064",
+    "temperature_celsius": 23.4,
+    "temperature_fahrenheit": 74.12,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:25.171690",
+    "temperature_celsius": 24.65,
+    "temperature_fahrenheit": 76.37,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:27.209486",
+    "temperature_celsius": 20.38,
+    "temperature_fahrenheit": 68.68,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:29.246656",
+    "temperature_celsius": 23.18,
+    "temperature_fahrenheit": 73.72,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:31.291716",
+    "temperature_celsius": 24.7,
+    "temperature_fahrenheit": 76.46,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:33.343415",
+    "temperature_celsius": 21.18,
+    "temperature_fahrenheit": 70.12,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:35.408808",
+    "temperature_celsius": 20.19,
+    "temperature_fahrenheit": 68.34,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:37.446960",
+    "temperature_celsius": 23.68,
+    "temperature_fahrenheit": 74.62,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:39.505112",
+    "temperature_celsius": 21.68,
+    "temperature_fahrenheit": 71.02,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:41.555264",
+    "temperature_celsius": 21.05,
+    "temperature_fahrenheit": 69.89,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:43.599019",
+    "temperature_celsius": 22.19,
+    "temperature_fahrenheit": 71.94,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:45.641204",
+    "temperature_celsius": 24.47,
+    "temperature_fahrenheit": 76.05,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:47.675550",
+    "temperature_celsius": 22.63,
+    "temperature_fahrenheit": 72.73,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:49.711375",
+    "temperature_celsius": 21.92,
+    "temperature_fahrenheit": 71.46,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:51.748523",
+    "temperature_celsius": 24.95,
+    "temperature_fahrenheit": 76.91,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:53.784099",
+    "temperature_celsius": 24.56,
+    "temperature_fahrenheit": 76.21,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:55.818220",
+    "temperature_celsius": 23.42,
+    "temperature_fahrenheit": 74.16,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:57.849933",
+    "temperature_celsius": 21.2,
+    "temperature_fahrenheit": 70.16,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:02:59.886371",
+    "temperature_celsius": 23.53,
+    "temperature_fahrenheit": 74.35,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:01.916730",
+    "temperature_celsius": 24.36,
+    "temperature_fahrenheit": 75.85,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:03.956001",
+    "temperature_celsius": 22.48,
+    "temperature_fahrenheit": 72.46,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:05.994173",
+    "temperature_celsius": 20.31,
+    "temperature_fahrenheit": 68.56,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:08.031646",
+    "temperature_celsius": 23.33,
+    "temperature_fahrenheit": 73.99,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:10.063781",
+    "temperature_celsius": 24.42,
+    "temperature_fahrenheit": 75.96,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:12.102089",
+    "temperature_celsius": 23.47,
+    "temperature_fahrenheit": 74.25,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:14.138800",
+    "temperature_celsius": 21.46,
+    "temperature_fahrenheit": 70.63,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:16.180694",
+    "temperature_celsius": 24.67,
+    "temperature_fahrenheit": 76.41,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:18.217905",
+    "temperature_celsius": 21.74,
+    "temperature_fahrenheit": 71.13,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:20.267166",
+    "temperature_celsius": 22.67,
+    "temperature_fahrenheit": 72.81,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:22.304834",
+    "temperature_celsius": 22.71,
+    "temperature_fahrenheit": 72.88,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:24.344605",
+    "temperature_celsius": 20.66,
+    "temperature_fahrenheit": 69.19,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:26.381559",
+    "temperature_celsius": 22.68,
+    "temperature_fahrenheit": 72.82,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:28.422759",
+    "temperature_celsius": 24.75,
+    "temperature_fahrenheit": 76.55,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:30.462387",
+    "temperature_celsius": 24.49,
+    "temperature_fahrenheit": 76.08,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:32.514780",
+    "temperature_celsius": 23.85,
+    "temperature_fahrenheit": 74.93,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:34.558108",
+    "temperature_celsius": 23.58,
+    "temperature_fahrenheit": 74.44,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:36.591015",
+    "temperature_celsius": 23.52,
+    "temperature_fahrenheit": 74.34,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:38.628955",
+    "temperature_celsius": 23.32,
+    "temperature_fahrenheit": 73.98,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:40.669905",
+    "temperature_celsius": 22.21,
+    "temperature_fahrenheit": 71.98,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:42.707969",
+    "temperature_celsius": 20.03,
+    "temperature_fahrenheit": 68.05,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:44.738493",
+    "temperature_celsius": 23.33,
+    "temperature_fahrenheit": 73.99,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:46.770417",
+    "temperature_celsius": 24.76,
+    "temperature_fahrenheit": 76.57,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:48.819529",
+    "temperature_celsius": 20.3,
+    "temperature_fahrenheit": 68.54,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:50.858223",
+    "temperature_celsius": 21.31,
+    "temperature_fahrenheit": 70.36,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:52.897771",
+    "temperature_celsius": 21.71,
+    "temperature_fahrenheit": 71.08,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:54.941097",
+    "temperature_celsius": 20.26,
+    "temperature_fahrenheit": 68.47,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:56.980288",
+    "temperature_celsius": 23.23,
+    "temperature_fahrenheit": 73.81,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:03:59.045171",
+    "temperature_celsius": 20.01,
+    "temperature_fahrenheit": 68.02,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:04:01.080349",
+    "temperature_celsius": 24.61,
+    "temperature_fahrenheit": 76.3,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:04:03.119768",
+    "temperature_celsius": 23.81,
+    "temperature_fahrenheit": 74.86,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:04:05.155521",
+    "temperature_celsius": 22.22,
+    "temperature_fahrenheit": 72.0,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:04:07.188284",
+    "temperature_celsius": 24.65,
+    "temperature_fahrenheit": 76.37,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:04:09.226118",
+    "temperature_celsius": 24.61,
+    "temperature_fahrenheit": 76.3,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:04:11.267658",
+    "temperature_celsius": 21.46,
+    "temperature_fahrenheit": 70.63,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:04:13.308134",
+    "temperature_celsius": 23.58,
+    "temperature_fahrenheit": 74.44,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:04:15.347658",
+    "temperature_celsius": 22.27,
+    "temperature_fahrenheit": 72.09,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:04:50.227554",
+    "temperature_celsius": 24.08,
+    "temperature_fahrenheit": 75.34,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:04:52.330288",
+    "temperature_celsius": 21.9,
+    "temperature_fahrenheit": 71.42,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:04:54.401939",
+    "temperature_celsius": 23.8,
+    "temperature_fahrenheit": 74.84,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:04:56.438938",
+    "temperature_celsius": 21.67,
+    "temperature_fahrenheit": 71.01,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:04:58.482809",
+    "temperature_celsius": 20.11,
+    "temperature_fahrenheit": 68.2,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:05:00.531556",
+    "temperature_celsius": 22.3,
+    "temperature_fahrenheit": 72.14,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:05:02.609846",
+    "temperature_celsius": 20.43,
+    "temperature_fahrenheit": 68.77,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:05:04.658854",
+    "temperature_celsius": 22.19,
+    "temperature_fahrenheit": 71.94,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:05:06.715071",
+    "temperature_celsius": 23.3,
+    "temperature_fahrenheit": 73.94,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:05:08.750981",
+    "temperature_celsius": 23.15,
+    "temperature_fahrenheit": 73.67,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:05:10.786651",
+    "temperature_celsius": 23.14,
+    "temperature_fahrenheit": 73.65,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:05:12.966567",
+    "temperature_celsius": 22.88,
+    "temperature_fahrenheit": 73.18,
+    "sensor_id": null
+  },
+  {
+    "timestamp": "2025-08-23T13:05:15.011909",
+    "temperature_celsius": 23.45,
+    "temperature_fahrenheit": 74.21,
+    "sensor_id": null
+  }
+]
