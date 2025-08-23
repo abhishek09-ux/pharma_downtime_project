@@ -1,9 +1,0 @@
-# Raspberry Pi sensor requirements
-adafruit-circuitpython-dht
-adafruit-blinka
-adafruit-circuitpython-mlx90614
-websockets
-requests
-spidev
-smbus2
-RPi.GPIO

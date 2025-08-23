@@ -4,7 +4,7 @@ websockets==12.0
 python-multipart==0.0.6
 
 # Raspberry Pi specific libraries (install only on Pi)
-# RPi.GPIO>=0.7.1
-# adafruit-circuitpython-dht>=3.7.0
-# adafruit-circuitpython-ads1x15>=2.2.21
-# adafruit-blinka>=8.22.0
+RPi.GPIO>=0.7.1
+adafruit-circuitpython-dht>=3.7.0
+adafruit-circuitpython-ads1x15>=2.2.21
+adafruit-blinka>=8.22.0
