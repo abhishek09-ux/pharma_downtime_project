@@ -6,6 +6,7 @@ import asyncio
 import json
 import logging
 import os
+import sys
 import warnings
 from contextlib import asynccontextmanager
 
@@ -20,6 +21,16 @@ from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
+
+# Import temperature detection modules
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'temperature_detection', 'src'))
+
+try:
+    from sensor.ds18b20_reader import DS18B20Reader, MockDS18B20Reader
+    DS18B20_AVAILABLE = True
+except ImportError:
+    DS18B20_AVAILABLE = False
+    logger.warning("DS18B20 temperature detection modules not available")
 
 # Import configuration
 from app.core.config import settings
@@ -75,6 +86,7 @@ events_log = []
 # Determine if we're running on Raspberry Pi
 RASPBERRY_PI = settings.RASPBERRY_PI_MODE
 hardware_sensors = None
+ds18b20_sensor = None
 
 # Check for manual Pi mode override
 FORCE_PI_MODE = os.getenv("FORCE_RASPBERRY_PI", "false").lower() == "true"
@@ -82,6 +94,25 @@ FORCE_PI_MODE = os.getenv("FORCE_RASPBERRY_PI", "false").lower() == "true"
 if FORCE_PI_MODE:
     logger.info("🔧 FORCE_RASPBERRY_PI enabled - Running in Pi mode without hardware")
     RASPBERRY_PI = True
+
+# Initialize DS18B20 temperature sensor
+if DS18B20_AVAILABLE:
+    try:
+        if RASPBERRY_PI and not FORCE_PI_MODE:
+            # Real Pi with actual hardware
+            ds18b20_sensor = DS18B20Reader()
+            logger.info("✅ DS18B20 temperature sensor initialized")
+        elif FORCE_PI_MODE:
+            # Forced Pi mode for testing - use mock sensor
+            ds18b20_sensor = MockDS18B20Reader()
+            logger.info("⚠️ Using mock DS18B20 sensor for testing")
+        else:
+            # Normal simulation mode - no temperature sensor
+            ds18b20_sensor = None
+            logger.info("⚠️ DS18B20 temperature sensor not available in simulation mode")
+    except Exception as e:
+        logger.warning(f"Failed to initialize DS18B20 sensor: {e}")
+        ds18b20_sensor = None
 
 # Try to import Raspberry Pi libraries and configure hardware
 if RASPBERRY_PI:
@@ -149,7 +180,13 @@ else:
 class SensorManager:
     def __init__(self):
         self.running = False
-        self.mode = "REAL SENSORS" if RASPBERRY_PI else "SIMULATION"
+        # Update mode to reflect the new logic
+        if RASPBERRY_PI and hardware_sensors:
+            self.mode = "REAL SENSORS"
+        elif RASPBERRY_PI and not hardware_sensors:
+            self.mode = "HARDWARE DETECTED - SENSORS NOT CONNECTED"
+        else:
+            self.mode = "DEVELOPMENT MODE - NO HARDWARE"
         self.read_errors = 0
         self.hardware = hardware_sensors
         logger.info(f"🚀 SensorManager initialized in {self.mode} mode")
@@ -216,136 +253,93 @@ class SensorManager:
             logger.warning(f"Current sensor read error: {e}")
             return None, None
     
-    def get_realistic_simulation_data(self):
-        """Generate realistic simulation data based on pharma industry patterns"""
-        import math
-        import time
+    def read_ds18b20_temperature(self):
+        """Read DS18B20 temperature sensor"""
+        global ds18b20_sensor
         
-        # Time-based patterns for realistic simulation
-        current_time = time.time()
-        
-        # Ambient temperature (office/lab environment: 20-26°C)
-        base_temp = 22.0
-        daily_temp_cycle = math.sin(current_time * 0.0001) * 3  # Slow daily variation
-        temp_noise = random.uniform(-0.5, 0.5)
-        ambient_temp = base_temp + daily_temp_cycle + temp_noise
-        
-        # Machine temperature (pharmaceutical equipment: 70-85°C normal operation)
-        base_machine_temp = 75.0
-        machine_cycle = math.sin(current_time * 0.01) * 5  # Machine operation cycles
-        machine_noise = random.uniform(-1, 2)
-        machine_temp = base_machine_temp + machine_cycle + machine_noise
-        
-        # Humidity (controlled pharma environment: 45-65%)
-        base_humidity = 55.0
-        humidity_cycle = math.cos(current_time * 0.0005) * 8
-        humidity_noise = random.uniform(-2, 2)
-        humidity = base_humidity + humidity_cycle + humidity_noise
-        
-        # Vibration (pharmaceutical equipment: 0.5-3.0G normal)
-        base_vibration = 1.5
-        vibration_cycle = math.sin(current_time * 2) * 0.8  # Machine vibration cycles
-        random_spike = random.uniform(0, 1.5) if random.random() < 0.05 else 0  # Occasional spikes
-        vibration_noise = random.uniform(-0.2, 0.3)
-        vibration = base_vibration + vibration_cycle + random_spike + vibration_noise
-        vibration = max(0.2, vibration)  # Minimum vibration
-        
-        # Current (pharmaceutical equipment: 2-6A normal operation)
-        base_current = 3.5
-        current_cycle = math.sin(current_time * 0.02) * 1.0
-        current_noise = random.uniform(-0.3, 0.5)
-        current = base_current + current_cycle + current_noise
-        current = max(1.0, min(8.0, current))
-        
-        # Load percentage based on current
-        load_percentage = (current / 8.0) * 100
-        
-        return {
-            'ambient_temp': round(ambient_temp, 1),
-            'machine_temp': round(machine_temp, 1), 
-            'humidity': round(humidity, 1),
-            'vibration': round(vibration, 2),
-            'current': round(current, 2),
-            'load': round(load_percentage, 1)
-        }
+        if not ds18b20_sensor:
+            return None
+            
+        try:
+            temperature = ds18b20_sensor.read_temperature()
+            if temperature is not None:
+                return round(temperature, 1)
+            return None
+        except Exception as e:
+            logger.warning(f"DS18B20 temperature read error: {e}")
+            return None
         
     async def read_sensors(self):
-        """Read data from all sensors - real or simulated"""
+        """Read data from all sensors - only show real data or 'not connected'"""
         global sensor_data
         
+        # Initialize all sensors as not connected
+        for sensor_name in sensor_data:
+            sensor_data[sensor_name]["status"] = "not_connected"
+        
         if RASPBERRY_PI and self.hardware:
+            # Try to read REAL sensors when hardware is available
             try:
-                # Read REAL sensors
+                # Read DHT22 ambient temperature and humidity
                 amb_temp, humidity = self.read_real_dht22()
-                vibration = self.read_real_vibration()
-                current, load = self.read_real_current()
                 
-                # Update sensor data with real readings
                 if amb_temp is not None:
                     sensor_data["temperature"]["value"] = round(amb_temp, 1)
                     sensor_data["temperature"]["status"] = "online"
-                else:
-                    sensor_data["temperature"]["status"] = "error"
+                    logger.debug(f"🌡️ DHT22 temperature: {amb_temp}°C")
                 
                 if humidity is not None:
                     sensor_data["humidity"]["value"] = round(humidity, 1)
                     sensor_data["humidity"]["status"] = "online"
-                else:
-                    sensor_data["humidity"]["status"] = "error"
+                    logger.debug(f"💧 DHT22 humidity: {humidity}%")
                 
+                # Read vibration sensors
+                vibration = self.read_real_vibration()
                 if vibration is not None:
                     sensor_data["vibration"]["value"] = round(vibration, 2)
                     sensor_data["vibration"]["status"] = "online"
-                else:
-                    sensor_data["vibration"]["status"] = "error"
+                    logger.debug(f"📳 Vibration: {vibration}G")
                 
+                # Read current and load
+                current, load = self.read_real_current()
                 if current is not None and load is not None:
                     sensor_data["current"]["value"] = round(current, 2)
                     sensor_data["current"]["status"] = "online"
                     sensor_data["load"]["value"] = round(load, 1)
                     sensor_data["load"]["status"] = "online"
-                else:
-                    sensor_data["current"]["status"] = "error"
-                    sensor_data["load"]["status"] = "error"
+                    logger.debug(f"⚡ Current: {current}A, Load: {load}%")
                 
-                # Machine temperature would need IR sensor (simulated for now)
-                sim_data = self.get_realistic_simulation_data()
-                sensor_data["machine_temperature"]["value"] = sim_data['machine_temp']
-                sensor_data["machine_temperature"]["status"] = "simulated"
+                # Machine temperature would need IR sensor - mark as not connected
+                sensor_data["machine_temperature"]["status"] = "not_connected"
                 
                 self.read_errors = 0
-                logger.debug(f"🌡️ Real sensors: T={amb_temp}°C, H={humidity}%, V={vibration}G, I={current}A")
                 
             except Exception as e:
                 self.read_errors += 1
                 logger.error(f"❌ Sensor read error #{self.read_errors}: {e}")
                 
-                # Fall back to simulation after 3 consecutive errors
+                # Mark all sensors as error after 3 consecutive failures
                 if self.read_errors >= 3:
                     for sensor in sensor_data:
-                        sensor_data[sensor]["status"] = "offline"
-                        
+                        if sensor_data[sensor]["status"] == "online":
+                            sensor_data[sensor]["status"] = "error"
+        
+        # Try to read DS18B20 temperature sensor (independent of other hardware)
+        ds18b20_temp = self.read_ds18b20_temperature()
+        if ds18b20_temp is not None:
+            # Use DS18B20 as primary temperature sensor if available
+            sensor_data["temperature"]["value"] = ds18b20_temp
+            sensor_data["temperature"]["status"] = "online"
+            logger.debug(f"🌡️ DS18B20 temperature: {ds18b20_temp}°C")
+        elif ds18b20_sensor and ds18b20_sensor.is_connected():
+            sensor_data["temperature"]["status"] = "error"
+        
+        # Log sensor status summary
+        connected_sensors = [name for name, data in sensor_data.items() if data["status"] == "online"]
+        if connected_sensors:
+            logger.info(f"✅ Connected sensors: {', '.join(connected_sensors)}")
         else:
-            # SIMULATION MODE - Use realistic pharmaceutical industry data
-            sim_data = self.get_realistic_simulation_data()
-            
-            sensor_data["temperature"]["value"] = sim_data['ambient_temp']
-            sensor_data["temperature"]["status"] = "simulated"
-            
-            sensor_data["machine_temperature"]["value"] = sim_data['machine_temp']
-            sensor_data["machine_temperature"]["status"] = "simulated"
-            
-            sensor_data["humidity"]["value"] = sim_data['humidity']
-            sensor_data["humidity"]["status"] = "simulated"
-            
-            sensor_data["vibration"]["value"] = sim_data['vibration']
-            sensor_data["vibration"]["status"] = "simulated"
-            
-            sensor_data["current"]["value"] = sim_data['current']
-            sensor_data["current"]["status"] = "simulated"
-            
-            sensor_data["load"]["value"] = sim_data['load']
-            sensor_data["load"]["status"] = "simulated"
+            logger.info("⚠️ No sensors connected - all showing 'Not Connected'")
     
     def calculate_downtime_risk(self):
         """Calculate downtime risk using enhanced ML model + rule-based system"""
@@ -861,6 +855,10 @@ dashboard_html = """
                         statusText = 'Error - Check Connection';
                         color = '#f59e0b';
                         break;
+                    case 'not_connected':
+                        statusText = 'Not Connected';
+                        color = '#6b7280';
+                        break;
                     case 'simulated':
                         statusText = 'Simulated Data';
                         color = '#6b7280';
@@ -881,7 +879,14 @@ dashboard_html = """
             const statusElement = document.getElementById(`${sensorType}-status`);
             
             if (valueElement && sensorInfo) {
-                valueElement.textContent = `${sensorInfo.value}${sensorInfo.unit}`;
+                // Show "Not Connected" for disconnected sensors
+                if (sensorInfo.status === 'not_connected') {
+                    valueElement.textContent = 'Not Connected';
+                    valueElement.style.color = '#6b7280';
+                } else {
+                    valueElement.textContent = `${sensorInfo.value}${sensorInfo.unit}`;
+                    valueElement.style.color = '#1f2937';
+                }
                 
                 if (statusElement) {
                     statusElement.className = 'status-indicator';
@@ -898,6 +903,10 @@ dashboard_html = """
                         case 'error':
                             statusElement.textContent = '🟡';
                             statusElement.classList.add('status-error');
+                            break;
+                        case 'not_connected':
+                            statusElement.textContent = '⚫';
+                            statusElement.style.color = '#6b7280';
                             break;
                         case 'simulated':
                             statusElement.textContent = '🔵';

@@ -89,23 +89,32 @@ class Settings:
     def detect_raspberry_pi(self):
         """Detect if running on Raspberry Pi"""
         try:
-            # Check for Raspberry Pi specific files
+            # Method 1: Check device tree model
             if os.path.exists('/proc/device-tree/model'):
                 with open('/proc/device-tree/model', 'rb') as f:
-                    model = f.read().decode('utf-8', errors='ignore')
+                    model = f.read().decode('utf-8', errors='ignore').strip('\x00')
                     if 'Raspberry Pi' in model:
                         self.RASPBERRY_PI_MODE = True
                         return
             
-            # Alternative check for Pi
+            # Method 2: Check /proc/cpuinfo for Pi-specific hardware
             if os.path.exists('/proc/cpuinfo'):
                 with open('/proc/cpuinfo', 'r') as f:
-                    cpuinfo = f.read()
-                    if 'BCM' in cpuinfo or 'ARM' in cpuinfo:
+                    cpuinfo = f.read().lower()
+                    # Look for Raspberry Pi specific identifiers
+                    pi_identifiers = ['bcm2', 'raspberry', 'arm']
+                    if any(identifier in cpuinfo for identifier in pi_identifiers):
                         self.RASPBERRY_PI_MODE = True
                         return
+            
+            # Method 3: Check for Pi-specific directories
+            pi_dirs = ['/sys/firmware/devicetree/base', '/opt/vc']
+            if any(os.path.exists(d) for d in pi_dirs):
+                self.RASPBERRY_PI_MODE = True
+                return
                         
-        except Exception:
+        except Exception as e:
+            print(f"Pi detection error: {e}")
             pass
         
         self.RASPBERRY_PI_MODE = False
