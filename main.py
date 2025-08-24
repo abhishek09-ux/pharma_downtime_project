@@ -95,13 +95,18 @@ if FORCE_PI_MODE:
     logger.info("🔧 FORCE_RASPBERRY_PI enabled - Running in Pi mode without hardware")
     RASPBERRY_PI = True
 
-# Initialize DS18B20 temperature sensor
+# Initialize DS18B20 temperature sensor - INDEPENDENT of other hardware
 if DS18B20_AVAILABLE:
     try:
         if RASPBERRY_PI and not FORCE_PI_MODE:
-            # Real Pi with actual hardware
-            ds18b20_sensor = DS18B20Reader()
-            logger.info("✅ DS18B20 temperature sensor initialized")
+            # Real Pi with actual hardware - try to initialize DS18B20
+            try:
+                ds18b20_sensor = DS18B20Reader()
+                logger.info("✅ DS18B20 temperature sensor initialized successfully")
+            except Exception as ds18b20_error:
+                logger.warning(f"DS18B20 initialization failed: {ds18b20_error}")
+                # Try mock as fallback only if specifically requested
+                ds18b20_sensor = None
         elif FORCE_PI_MODE:
             # Forced Pi mode for testing - use mock sensor
             ds18b20_sensor = MockDS18B20Reader()
@@ -111,8 +116,11 @@ if DS18B20_AVAILABLE:
             ds18b20_sensor = None
             logger.info("⚠️ DS18B20 temperature sensor not available in simulation mode")
     except Exception as e:
-        logger.warning(f"Failed to initialize DS18B20 sensor: {e}")
+        logger.error(f"Critical DS18B20 initialization error: {e}")
         ds18b20_sensor = None
+else:
+    logger.error("❌ DS18B20 modules not available - check temperature_detection integration")
+    ds18b20_sensor = None
 
 # Try to import Raspberry Pi libraries and configure hardware
 if RASPBERRY_PI:
@@ -160,17 +168,18 @@ if RASPBERRY_PI:
                 
             except Exception as e:
                 logger.error(f"❌ Hardware configuration failed: {e}")
-                if not FORCE_PI_MODE:
-                    RASPBERRY_PI = False
-                    hardware_sensors = None
+                logger.warning("⚠️ Other sensors failed, but DS18B20 may still work independently")
+                # DON'T change RASPBERRY_PI flag - keep it for DS18B20
+                hardware_sensors = None
         else:
             logger.info("⚠️ Hardware configuration skipped in FORCE mode")
             
     except ImportError as e:
+        logger.warning(f"⚠️ Pi libraries not available: {e}")
+        logger.info("📡 Will try DS18B20 independently of other hardware")
+        # DON'T change RASPBERRY_PI flag - keep it for DS18B20
         if not FORCE_PI_MODE:
-            RASPBERRY_PI = False
             hardware_sensors = None
-            logger.info(f"⚠️ Pi libraries not available: {e}")
         else:
             logger.info(f"⚠️ Pi libraries not available in forced mode: {e}")
             # Keep RASPBERRY_PI = True but hardware_sensors = None
@@ -180,11 +189,15 @@ else:
 class SensorManager:
     def __init__(self):
         self.running = False
-        # Update mode to reflect the new logic
-        if RASPBERRY_PI and hardware_sensors:
-            self.mode = "REAL SENSORS"
+        # Update mode to reflect the new logic with DS18B20 status
+        if RASPBERRY_PI and hardware_sensors and ds18b20_sensor:
+            self.mode = "REAL SENSORS + DS18B20"
+        elif RASPBERRY_PI and ds18b20_sensor and not hardware_sensors:
+            self.mode = "DS18B20 ONLY - OTHER SENSORS NOT CONNECTED"
+        elif RASPBERRY_PI and hardware_sensors:
+            self.mode = "REAL SENSORS - DS18B20 FAILED"
         elif RASPBERRY_PI and not hardware_sensors:
-            self.mode = "HARDWARE DETECTED - SENSORS NOT CONNECTED"
+            self.mode = "RASPBERRY PI DETECTED - SENSORS NOT CONNECTED"
         else:
             self.mode = "DEVELOPMENT MODE - NO HARDWARE"
         self.read_errors = 0
@@ -330,7 +343,7 @@ class SensorManager:
             # Use DS18B20 as primary temperature sensor if available
             sensor_data["temperature"]["value"] = ds18b20_temp
             sensor_data["temperature"]["status"] = "online"
-            logger.debug(f"🌡️ DS18B20 temperature: {ds18b20_temp}°C")
+            logger.info(f"🌡️ DS18B20 temperature: {ds18b20_temp}°C")
         elif ds18b20_sensor and ds18b20_sensor.is_connected():
             sensor_data["temperature"]["status"] = "error"
         
